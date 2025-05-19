@@ -5,7 +5,7 @@ async function loadComponent(id, path) {
 }
 
 loadComponent('navbar', '/src/component/navbar.html');
-// loadComponent('hero', '/src/components/hero.html');
+loadComponent('hero', '/src/component/hero-banner.html');
 // loadComponent('tentang-kami', '/src/components/tentang-kami.html');
 // loadComponent('artikel', '/src/components/artikel.html');
 // loadComponent('faq', '/src/components/faq.html');
