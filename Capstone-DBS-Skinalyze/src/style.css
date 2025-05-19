@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+#navbar {
+  width: 100%;
+}
+
 html, body {
   height: 100%;
   width: 100%;
@@ -39,7 +43,7 @@ a:hover {
 body {
   margin: 0;
   padding: 0;
-  display: flex;
+  display: block;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
