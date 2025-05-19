@@ -1,6 +1,6 @@
 ## Main Quest
 1. Build Responsive layout web apps
-2. Implement networking calls to interacct with the project's api
+2. Implement networking calls to interact with the project's api
 3. Using module bundler (Webpack, Vite, etc.)
 4. Building RESTful API
 5. RESTful API can save data with our without database
