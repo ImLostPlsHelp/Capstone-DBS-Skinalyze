@@ -9,4 +9,4 @@ loadComponent('hero', '/src/component/hero-banner.html');
 // loadComponent('tentang-kami', '/src/components/tentang-kami.html');
 // loadComponent('artikel', '/src/components/artikel.html');
 // loadComponent('faq', '/src/components/faq.html');
-// loadComponent('footer', '/src/components/footer.html');
+// loadComponent('footer', '/src/component/footer.html');
