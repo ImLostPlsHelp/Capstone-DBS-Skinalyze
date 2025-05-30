@@ -13,7 +13,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        skin_check: resolve(__dirname, 'src/pages/skin-check.html'),
+        skin_check: resolve(__dirname, 'skin-check.html'),
       }
     }
   }
