@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^22.15.27",
     "vite": "^6.3.5"
   },
   "dependencies": {
