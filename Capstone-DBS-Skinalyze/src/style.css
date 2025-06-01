@@ -16,6 +16,26 @@
   width: 100%;
 }
 
+#faq-full {
+  width: 100%;
+}
+
+.hero-banner-faq {
+  width: 100%;
+  height: 363px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/assets/faq.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#faq {
+  width: 100%;
+}
+
 #footer {
   width: 100%;
 }
