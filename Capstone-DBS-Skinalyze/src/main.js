@@ -7,7 +7,8 @@ async function loadComponent(id, path) {
 // Ambil dari public/component
 loadComponent('navbar', '/component/navbar.html');
 loadComponent('hero', '/component/hero-banner.html');
-// loadComponent('tentang-kami', '/src/components/tentang-kami.html');
+loadComponent('tentang-kami', '/component/about-us.html');
+loadComponent('artikel', '/component/artikel.html');
 // loadComponent('artikel', '/src/components/artikel.html');
 loadComponent('faq', '/component/faq.html');
 loadComponent('faq-full', '/component/faq-full.html');
