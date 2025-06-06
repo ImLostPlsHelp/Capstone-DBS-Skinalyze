@@ -14,6 +14,9 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         skin_check: resolve(__dirname, 'skin-check.html'),
+        artikel: resolve(__dirname, 'artikel.html'),
+        faq: resolve(__dirname, 'faq.html'),
+        hasil: resolve(__dirname, 'hasil.html'),
       }
     }
   }
