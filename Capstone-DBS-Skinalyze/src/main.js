@@ -9,7 +9,7 @@ loadComponent('navbar', '/component/navbar.html');
 loadComponent('hero', '/component/hero-banner.html');
 loadComponent('tentang-kami', '/component/about-us.html');
 loadComponent('artikel', '/component/artikel.html');
-// loadComponent('artikel', '/src/component/artikel.html');
+// loadComponent('artikel', '/src/components/artikel.html');
 loadComponent('faq', '/component/faq.html');
 loadComponent('faq-full', '/component/faq-full.html');
 loadComponent('footer', '/component/footer.html');
