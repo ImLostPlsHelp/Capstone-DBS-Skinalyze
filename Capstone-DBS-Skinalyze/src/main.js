@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('upload-input');
   const cameraPlaceholder = document.querySelector('.camera-placeholder');
   const checkNowBtn = document.getElementById('check-skin');
+  const CheckAgainBtn = document.getElementById('check-again');
 
   uploadBtn?.addEventListener('click', () => {
     fileInput?.click();
@@ -47,5 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
   checkNowBtn?.addEventListener('click', () => {
     // TODO: Call API periksa gambar pakai model dari tensorflow.js
     window.location.href = '/hasil.html';
+  });
+
+  CheckAgainBtn?.addEventListener('click', () => {
+    window.location.href = '/skin-check.html';
   });
 });
