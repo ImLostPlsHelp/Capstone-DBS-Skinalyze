@@ -13,3 +13,39 @@ loadComponent('artikel', '/component/artikel.html');
 loadComponent('faq', '/component/faq.html');
 loadComponent('faq-full', '/component/faq-full.html');
 loadComponent('footer', '/component/footer.html');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const uploadBtn = document.getElementById('upload-picture');
+  const fileLabel = document.querySelector('label[for="upload-picture"]');
+  const fileInput = document.getElementById('upload-input');
+  const cameraPlaceholder = document.querySelector('.camera-placeholder');
+  const checkNowBtn = document.getElementById('check-skin');
+
+  uploadBtn?.addEventListener('click', () => {
+    fileInput?.click();
+  });
+
+  fileInput?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      fileLabel.textContent = file.name;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        cameraPlaceholder.innerHTML = `
+          <img
+            src="${evt.target.result}"
+            alt="Preview"
+            class="w-full h-full object-contain"
+          />
+        `;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  checkNowBtn?.addEventListener('click', () => {
+    // TODO: Call API periksa gambar pakai model dari tensorflow.js
+    window.location.href = '/hasil.html';
+  });
+});
