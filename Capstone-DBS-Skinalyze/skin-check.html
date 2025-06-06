@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite App</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <div id="navbar"></div>
+
+  <div id="main-content" class="container mx-auto py-8 flex flex-col items-center justify-center px-4">
+
+    <div class="flex flex-col items-start justify-center w-full max-w-3xl">
+      <h2 class="text-4xl text-[#2e5077] font-semibold mb-6">Periksa Sekarang</h2>
+      <div class="camera-container border-dashed border-2 border-gray-300 rounded-lg w-full h-96 flex items-start relative mb-5">
+        <div class="camera-placeholder w-full h-full flex items-center justify-center">
+          <img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />
+        </div>
+      </div>
+      <span class="upload-bar border-black border-1 border-solid rounded-lg w-full h-16 flex flex-row items-center px-2 justify-baseline">
+        <!-- TODO: Tambahin functionalitas buat upload gambar sama nampilin nama file -->
+          <button id="upload-picture" class="rounded-sm bg-[#2e5077] py-2 px-10 text-white">Upload File</button>
+          <label for="upload-picture" class="ml-1 font-bold">No Files Chosen.jpg</label>
+      </span>
+      </div>
+      <div class="flex flex-col items-end justify-center w-full max-w-3xl mt-6">
+        <button id="check-skin" class="bg-[#2e5077] text-white font-bold py-3 px-12 rounded-sm">
+          Check Now
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+  <div id="footer" class="mt-auto"></div>
+
+  <input
+  type="file"
+  id="upload-input"
+  accept="image/png, image/jpeg, image/jpg"
+  style="display: none;"
+/>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

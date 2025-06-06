@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^22.15.27",
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@hapi/hapi": "^21.4.0",
     "@tailwindcss/vite": "^4.1.7",
     "tailwindcss": "^4.1.7"
   }
