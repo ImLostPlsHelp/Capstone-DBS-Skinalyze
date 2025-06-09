@@ -10,29 +10,35 @@
   <body class="flex flex-col min-h-screen">
     <div id="navbar"></div>
 
-    <!-- TODO: Tambah bisa nampilin gambar yang di upload sama hasil prediksi -->
-
-        <div class="container mx-auto px-4 py-8 max-w-9xl mt-10">
+    <div class="container mx-auto px-4 py-8 max-w-9xl mt-10">
       <h3 class="text-xl md:text-2xl font-semibold mb-6">
-        Hasil Prediksi : <span class="font-bold">Dermatofibroma</span>
+        Hasil Prediksi : <span id="hasil-nama" class="font-bold">-</span>
       </h3>
 
       <div class="mb-4">
-        <p class="text-sm md:text-base font-medium">Risiko : 
-          <span class="text-green-600 font-semibold">Bukan Kanker</span>
+        <p class="text-sm md:text-base font-medium">
+          Risiko :
+          <span id="hasil-risiko" class="text-green-600 font-semibold">-</span>
         </p>
-        <p class="text-sm md:text-base font-medium">Status : 
-          <span class="text-green-600 font-semibold">Tidak Berbahaya</span>
+        <p class="text-sm md:text-base font-medium">
+          Status :
+          <span id="hasil-status" class="text-green-600 font-semibold">-</span>
         </p>
-        <p class="text-sm md:text-base font-medium">Saran : 
-          <span class="text-gray-600">-</span>
+        <p class="text-sm md:text-base font-medium">
+          Saran :
+          <span id="hasil-saran" class="text-gray-600">-</span>
         </p>
+      </div>
+
+      <div class="mb-6">
+        <p class="text-sm md:text-base font-semibold mb-2">Gambar yang Diupload</p>
+        <img id="preview-image" src="" alt="Hasil Upload" class="max-w-xs rounded shadow border" />
       </div>
 
       <div class="mb-4">
         <p class="text-sm md:text-base font-semibold mb-2">Deskripsi</p>
         <p class="text-sm leading-relaxed text-justify">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam a dui aliquam, semper leo sit amet, congue erat. Etiam nisl ligula, dictum eget aliquam eu, laoreet a massa. Nulla eget ligula arcu. Duis blandit arcu libero, nec dapibus leo mattis sit amet. Aliquam auctor nibh mauris, vel facilisis lectus mollis laoreet. Integer vitae sollicitudin tortor. In eget nibh fringilla, posuere dolor non, volutpat orci. Morbi nibh ligula, ornare ac dictum in, suscipit in purus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus venenatis metus quis dapibus pellentesque. Nulla volutpat venenatis tempor. Nunc sagittis ex sem, vel semper massa malesuada eget. Ut bibendum erat vitae tellus vestibulum, ac eleifend ex pretium. Donec semper sapien sed egestas fringilla. Curabitur vestibulum finibus varius. Fusce rutrum justo at eros ornare, at lobortis magna facilisis.
+          Hasil ini adalah prediksi dari model Machine Learning yang mendeteksi kemungkinan jenis penyakit kulit berdasarkan gambar yang Anda unggah. Pastikan untuk selalu memverifikasi hasil ini dengan profesional medis.
         </p>
       </div>
 
@@ -46,5 +52,21 @@
     <div id="footer" class="mt-auto"></div>
 
     <script type="module" defer src="/src/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const result = JSON.parse(localStorage.getItem('predictionResult') || '{}');
+        document.getElementById('hasil-nama').textContent = result.name || '-';
+        document.getElementById('hasil-risiko').textContent = result.risk || '-';
+        document.getElementById('hasil-status').textContent = result.status || '-';
+        document.getElementById('hasil-saran').textContent = result.saran || '-';
+
+        // Display uploaded image if available
+        const preview = document.getElementById('preview-image');
+        const savedImage = localStorage.getItem('uploadedImage');
+        if (savedImage) {
+          preview.src = savedImage;
+        }
+      });
+    </script>
   </body>
 </html>

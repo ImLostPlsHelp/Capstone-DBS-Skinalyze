@@ -1,15 +1,18 @@
+import { predictSkinType } from './predict/predict.js';
+
+// Load HTML components
 async function loadComponent(id, path) {
-  const res = await fetch(path);
+  const slot = document.getElementById(id);
+  if (!slot) return;
+  const res  = await fetch(path);
   const html = await res.text();
-  document.getElementById(id).innerHTML = html;
+  slot.innerHTML = html;
 }
 
-// Ambil dari public/component
 loadComponent('navbar', '/component/navbar.html');
 loadComponent('hero', '/component/hero-banner.html');
 loadComponent('tentang-kami', '/component/about-us.html');
 loadComponent('artikel', '/component/artikel.html');
-// loadComponent('artikel', '/src/components/artikel.html');
 loadComponent('faq', '/component/faq.html');
 loadComponent('faq-full', '/component/faq-full.html');
 loadComponent('footer', '/component/footer.html');
@@ -20,37 +23,68 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('upload-input');
   const cameraPlaceholder = document.querySelector('.camera-placeholder');
   const checkNowBtn = document.getElementById('check-skin');
-  const CheckAgainBtn = document.getElementById('check-again');
+  const checkAgainBtn = document.getElementById('check-again');
 
+  let selectedImage = null;
+
+  // Trigger file picker
   uploadBtn?.addEventListener('click', () => {
     fileInput?.click();
   });
 
+  // Handle file input
   fileInput?.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
-      fileLabel.textContent = file.name;
+    if (!file) return;
+    fileLabel.textContent = file.name;
 
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        cameraPlaceholder.innerHTML = `
-          <img
-            src="${evt.target.result}"
-            alt="Preview"
-            class="w-full h-full object-contain"
-          />
-        `;
-      };
-      reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const img = new Image();
+      img.src = evt.target.result;
+      img.className = 'w-full h-full object-contain';
+      img.onload = () => selectedImage = img;
+
+      // ⬇️ Store image to localStorage
+      localStorage.setItem('uploadedImage', evt.target.result);
+
+      cameraPlaceholder.innerHTML = '';
+      cameraPlaceholder.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Handle "Check Now" button
+  checkNowBtn?.addEventListener('click', async () => {
+    if (!selectedImage) {
+      alert('Please upload an image first.');
+      return;
+    }
+
+    try {
+      const resultIndex = await predictSkinType(selectedImage);
+
+      const labelMap = [
+        { name: 'Actinic Keratoses', risk: 'Bukan Kanker', status: 'Berbahaya', saran: 'Periksa dokter' },
+        { name: 'Basal Cell Carcinoma', risk: 'Kanker', status: 'Berbahaya', saran: 'Segera konsultasi dokter' },
+        { name: 'Benign Keratosis-like Lesions', risk: 'Bukan Kanker', status: 'Berbahaya', saran: '-' },
+        { name: 'Dermatofibroma', risk: 'Bukan Kanker', status: 'Tidak Berbahaya', saran: '-' },
+        { name: 'Melanoma', risk: 'Kanker', status: 'Berbahaya', saran: 'Segera periksa dokter kulit' },
+        { name: 'Melanocytic Nevi', risk: 'Bukan Kanker', status: 'Tidak Berbahaya', saran: '-' },
+        { name: 'Vascular Lesions', risk: 'Bukan Kanker', status: 'Tidak Berbahaya', saran: '-' }
+      ];
+
+      const result = labelMap[resultIndex];
+      localStorage.setItem('predictionResult', JSON.stringify(result));
+      window.location.href = '/hasil.html';
+    } catch (error) {
+      console.error('Prediction failed:', error);
+      alert('Terjadi kesalahan saat memproses gambar.');
     }
   });
 
-  checkNowBtn?.addEventListener('click', () => {
-    // TODO: Call API periksa gambar pakai model dari tensorflow.js
-    window.location.href = '/hasil.html';
-  });
-
-  CheckAgainBtn?.addEventListener('click', () => {
+  // Handle "Check Again" button on result page
+  checkAgainBtn?.addEventListener('click', () => {
     window.location.href = '/skin-check.html';
   });
 });
