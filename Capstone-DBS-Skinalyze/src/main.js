@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import CONFIG from "./config";
+import { image } from "@tensorflow/tfjs";
 
 const firebaseConfig = {
   apiKey: CONFIG.API_KEY,
@@ -130,6 +131,24 @@ document.addEventListener("DOMContentLoaded", () => {
       // 1. Get the initial result from your labelMap
       const result = labelMap[resultIndex];
 
+      const saveResultToFirestore = await fetch("http://localhost:3000/save-result", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          name: result.name,
+          risk: result.risk,
+          status: result.status,
+          image: localStorage.getItem("uploadedImage"),
+        })
+    })
+
+    if(!saveResultToFirestore.ok) {
+      throw new Error("Failed to save result to Firestore.");
+    }
+
       // 2. Call your backend to get Groq advice
       const groqResponse = await fetch("http://localhost:3000/get-groq-advice", {
         method: "POST",
@@ -242,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = auth.currentUser;
         if (user) {
           const idToken = await getIdToken(user);
-          localStorage.setItem("token", idToken);
+          sessionStorage.setItem("token", idToken);
           window.location.href = "/index.html";
         } else {
           alert("Login gagal. Periksa kembali email dan password.");
