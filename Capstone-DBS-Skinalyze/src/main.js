@@ -6,6 +6,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import CONFIG from "./config";
 
 const firebaseConfig = {
@@ -17,6 +18,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 async function loadComponent(id, path) {
   const res = await fetch(path);
@@ -129,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
   signUpBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
 
+    // Validasi field
     if (!email || !password || !confirmPassword || !firstName || !lastName) {
       alert("Lengkapi semua data terlebih dahulu!");
       return;
@@ -144,17 +147,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        emailValue,
-        passwordValue
-      );
-      const user = userCredential.user;
+      const response = await fetch("http://localhost:3000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          password: password.value,
+        }),
+      });
 
-      // Update display name
-      // await updateProfile(user, {
-      //   displayName: `${firstName.value} ${lastName.value}`,
-      // });
+      if (!response.ok) throw new Error("Gagal menyimpan data ke server");
 
       alert("Akun berhasil dibuat!");
       window.location.href = "/index.html";
