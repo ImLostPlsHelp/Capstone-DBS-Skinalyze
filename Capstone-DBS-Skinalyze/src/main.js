@@ -4,7 +4,7 @@ import {
   onAuthStateChanged,
   getIdToken,
   signOut,
-  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import CONFIG from "./config";
@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const password = document.getElementById("password");
   const confirmPassword = document.getElementById("confirm-password");
   const signUpBtn = document.getElementById("sign-up-button");
+  const loginForm = document.getElementById("loginForm");
 
   let uploadedImage = null;
 
@@ -167,6 +168,34 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error signing up:", error);
       alert(error.message);
+    }
+  });
+
+  loginForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!email || !password) {
+      alert('Mohon isi semua field.');
+      return;
+    }
+
+    try {
+      const auth = getAuth(app);
+      await signInWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      if (user) {
+        const idToken = await getIdToken(user);
+        localStorage.setItem('token', idToken);
+        window.location.href = '/index.html';
+      } else {
+        alert('Login gagal. Periksa kembali email dan password.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Terjadi kesalahan saat login.');
     }
   });
 });
