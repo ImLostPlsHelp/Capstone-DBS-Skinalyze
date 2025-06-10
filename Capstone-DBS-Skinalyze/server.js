@@ -1,53 +1,49 @@
-// server.js
-import express     from 'express';
-import multer      from 'multer';
-import * as tf     from '@tensorflow/tfjs-node';
-import path        from 'path';
+import express from 'express';
+import Groq from 'groq-sdk';
+import dotenv from 'dotenv';
 
-const app    = express();
-const upload = multer();
+dotenv.config();
 
-// 1) Serve everything in ./public at the site root
-app.use(express.static(path.join(__dirname, 'public')));
+const app = express();
+app.use(express.json());
 
-// 2) Load your TF-JS GraphModel once at startup
-const MODEL_PATH = 'model/model.json';  
-let model;
-(async () => {
-  model = await tf.loadGraphModel(MODEL_PATH);
-  console.log('Model loaded.');
-})();
-
-// 3) Preprocessing helper (same as in your notebook)
-function preprocess(buffer) {
-  let img = tf.node.decodeImage(buffer, 3);
-  img = tf.image.resizeBilinear(img, [160, 160]);
-  img = img.expandDims(0);
-  return img.div(127.5).sub(1);
-}
-
-// 4) Predict endpoint
-app.post('/predict', upload.single('image'), async (req, res) => {
-  if (!model) {
-    return res.status(503).json({ error: 'Model still loading. Try again in a moment.' });
-  }
-  if (!req.file) {
-    return res.status(400).json({ error: 'No image file uploaded.' });
-  }
-
-  try {
-    const inputTensor = preprocess(req.file.buffer);
-    const logits      = model.predict(inputTensor); 
-    const probs       = await logits.data();         // Float32Array
-
-    // Return just the raw probabilities; client will pick the top index
-    return res.json({ probs: Array.from(probs) });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Inference failed.' });
-  }
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
 });
 
-// 5) Start server
+app.post('/get-groq-advice', async (req, res) => {
+    const { disease } = req.body;
+
+    if (!disease) {
+        return res.status(400).json({ error: 'Disease name is required' });
+    }
+
+    try {
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [
+                 {
+                    role: 'system',
+                    content: "Anda adalah asisten kesehatan virtual yang memberikan informasi umum dalam Bahasa Indonesia. Jangan pernah memberikan diagnosis atau resep medis. Jelaskan secara singkat apa itu kondisi kulit yang disebutkan, lalu berikan beberapa tips perawatan umum yang aman dan tidak bersifat medis. Selalu akhiri dengan peringatan untuk berkonsultasi dengan dokter profesional."
+                },
+                {
+                    role: 'user',
+                    content: `Tolong berikan informasi dan saran umum untuk kondisi: ${disease}`
+                }
+            ],
+            model: 'llama3-8b-8192',
+            temperature: 0.7,
+        });
+
+        const advice = chatCompletion.choices[0]?.message?.content || 'Saran tidak dapat dibuat saat ini.';
+        res.json({ advice });
+
+    } catch (error) {
+        console.error('Error calling Groq API:', error);
+        res.status(500).json({ error: 'Failed to generate advice' });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Listening on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

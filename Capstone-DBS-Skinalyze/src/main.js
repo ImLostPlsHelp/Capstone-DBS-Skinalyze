@@ -56,32 +56,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle "Check Now" button
   checkNowBtn?.addEventListener('click', async () => {
-    if (!selectedImage) {
-      alert('Please upload an image first.');
-      return;
+  if (!selectedImage) {
+    alert('Please upload an image first.');
+    return;
+  }
+
+  // Optional: Show a loading indicator to the user
+  const checkNowText = checkNowBtn.textContent;
+  checkNowBtn.disabled = true;
+  checkNowBtn.textContent = 'Menganalisis...';
+
+  try {
+    const resultIndex = await predictSkinType(selectedImage);
+
+    const labelMap = [
+        { name: 'Actinic Keratoses', risk: 'Bukan Kanker', status: 'Berbahaya' },
+        { name: 'Basal Cell Carcinoma', risk: 'Kanker', status: 'Berbahaya' },
+        { name: 'Benign Keratosis-like Lesions', risk: 'Bukan Kanker', status: 'Berbahaya' },
+        { name: 'Dermatofibroma', risk: 'Bukan Kanker', status: 'Tidak Berbahaya' },
+        { name: 'Melanoma', risk: 'Kanker', status: 'Berbahaya' },
+        { name: 'Melanocytic Nevi', risk: 'Bukan Kanker', status: 'Tidak Berbahaya' },
+        { name: 'Vascular Lesions', risk: 'Bukan Kanker', status: 'Tidak Berbahaya' }
+    ];
+
+    // 1. Get the initial result from your labelMap
+    const result = labelMap[resultIndex];
+
+    // 2. Call your backend to get Groq advice
+    const groqResponse = await fetch('/get-groq-advice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ disease: result.name }), // Send the disease name
+    });
+
+    if (!groqResponse.ok) {
+        throw new Error('Failed to get advice from server.');
     }
 
-    try {
-      const resultIndex = await predictSkinType(selectedImage);
+    const groqData = await groqResponse.json();
 
-      const labelMap = [
-        { name: 'Actinic Keratoses', risk: 'Bukan Kanker', status: 'Berbahaya', saran: 'Periksa dokter' },
-        { name: 'Basal Cell Carcinoma', risk: 'Kanker', status: 'Berbahaya', saran: 'Segera konsultasi dokter' },
-        { name: 'Benign Keratosis-like Lesions', risk: 'Bukan Kanker', status: 'Berbahaya', saran: '-' },
-        { name: 'Dermatofibroma', risk: 'Bukan Kanker', status: 'Tidak Berbahaya', saran: '-' },
-        { name: 'Melanoma', risk: 'Kanker', status: 'Berbahaya', saran: 'Segera periksa dokter kulit' },
-        { name: 'Melanocytic Nevi', risk: 'Bukan Kanker', status: 'Tidak Berbahaya', saran: '-' },
-        { name: 'Vascular Lesions', risk: 'Bukan Kanker', status: 'Tidak Berbahaya', saran: '-' }
-      ];
+    // 3. Add the new dynamic advice to your result object
+    result.saran = groqData.advice; // This replaces the static 'saran'
 
-      const result = labelMap[resultIndex];
-      localStorage.setItem('predictionResult', JSON.stringify(result));
-      window.location.href = '/hasil.html';
-    } catch (error) {
-      console.error('Prediction failed:', error);
-      alert('Terjadi kesalahan saat memproses gambar.');
-    }
-  });
+    // 4. Save the COMPLETE result (with Groq advice) to localStorage
+    localStorage.setItem('predictionResult', JSON.stringify(result));
+
+    // 5. Redirect to the result page
+    window.location.href = '/hasil.html';
+
+  } catch (error) {
+    console.error('Prediction or advice generation failed:', error);
+    alert('Terjadi kesalahan saat memproses gambar atau mendapatkan saran.');
+    // Reset button state on error
+    checkNowBtn.disabled = false;
+    checkNowBtn.textContent = checkNowText;
+  }
+});
 
   // Handle "Check Again" button on result page
   checkAgainBtn?.addEventListener('click', () => {
