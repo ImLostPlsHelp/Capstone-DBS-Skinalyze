@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { profile } from 'node:console'
+// The 'profile' import from 'node:console' was unused, so I've removed it for cleanliness.
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -24,5 +24,16 @@ export default defineConfig({
         about: resolve(__dirname, 'about.html'),
       }
     }
-  }
+  },
+  // --- ADD THIS NEW SECTION ---
+  server: {
+    proxy: {
+      // This tells Vite to forward any request to '/get-groq-advice'
+      // to your backend server running on http://localhost:3000
+      '/get-groq-advice': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
 })

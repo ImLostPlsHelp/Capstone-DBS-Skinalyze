@@ -1,3 +1,4 @@
+import { predictSkinType } from './predict/predict.js';
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -21,9 +22,11 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 async function loadComponent(id, path) {
-  const res = await fetch(path);
+  const slot = document.getElementById(id);
+  if (!slot) return;
+  const res  = await fetch(path);
   const html = await res.text();
-  document.getElementById(id).innerHTML = html;
+  slot.innerHTML = html;
 }
 
 // Ambil dari public/component
@@ -53,65 +56,96 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let uploadedImage = null;
 
-  uploadBtn?.addEventListener("click", () => {
+    uploadBtn?.addEventListener('click', () => {
     fileInput?.click();
   });
 
-  fileInput?.addEventListener("change", (e) => {
+  // Handle file input
+  fileInput?.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
-      uploadedImage = file;
-      fileLabel.textContent = file.name;
+    if (!file) return;
+    fileLabel.textContent = file.name;
 
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        cameraPlaceholder.innerHTML = `
-          <img
-            src="${evt.target.result}"
-            alt="Preview"
-            class="w-full h-full object-contain"
-          />
-        `;
-      };
-      reader.readAsDataURL(file);
-    }
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const img = new Image();
+      img.src = evt.target.result;
+      img.className = 'w-full h-full object-contain';
+      img.onload = () => selectedImage = img;
+
+      // ⬇️ Store image to localStorage
+      localStorage.setItem('uploadedImage', evt.target.result);
+
+      cameraPlaceholder.innerHTML = '';
+      cameraPlaceholder.appendChild(img);
+    };
+    reader.readAsDataURL(file);
   });
 
-  checkNowBtn?.addEventListener("click", async () => {
-    const user = auth.currentUser;
+  // Handle "Check Now" button
+  checkNowBtn?.addEventListener('click', async () => {
+  if (!selectedImage) {
+    alert('Please upload an image first.');
+    return;
+  }
 
-    if (!user) {
-      alert("Silakan login terlebih dahulu.");
-      return;
-    }
+  // Optional: Show a loading indicator to the user
+  const checkNowText = checkNowBtn.textContent;
+  checkNowBtn.disabled = true;
+  checkNowBtn.textContent = 'Menganalisis...';
 
-    const idToken = await user.getIdToken();
+  try {
+    const resultIndex = await predictSkinType(selectedImage);
 
-    const formData = new FormData();
-    formData.append("image", uploadedImage);
+    const labelMap = [
+        { name: 'Actinic Keratoses', risk: 'Bukan Kanker', status: 'Berbahaya' },
+        { name: 'Basal Cell Carcinoma', risk: 'Kanker', status: 'Berbahaya' },
+        { name: 'Benign Keratosis-like Lesions', risk: 'Bukan Kanker', status: 'Berbahaya' },
+        { name: 'Dermatofibroma', risk: 'Bukan Kanker', status: 'Tidak Berbahaya' },
+        { name: 'Melanoma', risk: 'Kanker', status: 'Berbahaya' },
+        { name: 'Melanocytic Nevi', risk: 'Bukan Kanker', status: 'Tidak Berbahaya' },
+        { name: 'Vascular Lesions', risk: 'Bukan Kanker', status: 'Tidak Berbahaya' }
+    ];
 
-    const response = await fetch("https://your-backend-url.com/api/scan", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-      body: formData,
+    // 1. Get the initial result from your labelMap
+    const result = labelMap[resultIndex];
+
+    // 2. Call your backend to get Groq advice
+    const groqResponse = await fetch('/get-groq-advice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ disease: result.name }), // Send the disease name
     });
 
-    const result = await response.json();
-
-    if (response.ok) {
-      localStorage.setItem("scanResult", JSON.stringify(result));
-      window.location.href = "/hasil.html";
-    } else {
-      alert("Gagal menganalisis gambar.");
-      console.error(result);
+    if (!groqResponse.ok) {
+        throw new Error('Failed to get advice from server.');
     }
-  });
 
-  CheckAgainBtn?.addEventListener("click", () => {
-    window.location.href = "/skin-check.html";
-  });
+    const groqData = await groqResponse.json();
+
+    // 3. Add the new dynamic advice to your result object
+    result.saran = groqData.advice; // This replaces the static 'saran'
+
+    // 4. Save the COMPLETE result (with Groq advice) to localStorage
+    localStorage.setItem('predictionResult', JSON.stringify(result));
+
+    // 5. Redirect to the result page
+    window.location.href = '/hasil.html';
+
+  } catch (error) {
+    console.error('Prediction or advice generation failed:', error);
+    alert('Terjadi kesalahan saat memproses gambar atau mendapatkan saran.');
+    // Reset button state on error
+    checkNowBtn.disabled = false;
+    checkNowBtn.textContent = checkNowText;
+  }
+});
+
+  // Handle "Check Again" button on result page
+  checkAgainBtn?.addEventListener('click', () => {
+    window.location.href = '/skin-check.html';
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
