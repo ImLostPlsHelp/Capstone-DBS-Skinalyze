@@ -6,7 +6,7 @@
     </div>
 
     <!-- Hamburger menu (mobile) -->
-    <button id="menu-toggle" class="lg:hidden focus:outline-none text-white text-2xl">
+    <button id="menu-toggle" class="lg:hidden focus:outline-none text-white text-2xl transition-transform duration-300">
       ☰
     </button>
 
@@ -29,14 +29,15 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="md:hidden hidden px-4 pb-4">
+  <div id="mobile-menu"
+    class="lg:hidden hidden px-4 pb-4 transition-all duration-300 ease-in-out transform -translate-y-2 opacity-0">
     <ul class="flex flex-col gap-2 text-sm font-medium">
-      <li><a href="/index.html" class="block py-1 hover:text-blue-300">Home</a></li>
-      <li><a href="/about.html" class="block py-1 hover:text-blue-300">About</a></li>
-      <li><a href="/artikel.html" class="block py-1 hover:text-blue-300">Artikel</a></li>
-      <li><a href="/faq.html" class="block py-1 hover:text-blue-300">FAQ</a></li>
-      <li><a href="#login" class="block py-1 hover:text-blue-300">Login</a></li>
-      <li><a href="#contact" class="block py-1 hover:text-blue-300">Get in touch</a></li>
+      <li><a href="/index.html" class="block py-1 text-[#F6F4F0] hover:text-blue-300">Home</a></li>
+      <li><a href="/about.html" class="block py-1 text-[#F6F4F0] hover:text-blue-300">About</a></li>
+      <li><a href="/artikel.html" class="block py-1 text-[#F6F4F0] hover:text-blue-300">Artikel</a></li>
+      <li><a href="/faq.html" class="block py-1 text-[#F6F4F0] hover:text-blue-300">FAQ</a></li>
+      <li><a href="#login" class="block py-1 text-[#F6F4F0] hover:text-blue-300">Login</a></li>
+      <li><a href="#contact" class="block py-1 text-[#F6F4F0] hover:text-blue-300">Get in touch</a></li>
     </ul>
   </div>
 </nav>

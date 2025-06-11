@@ -2,10 +2,45 @@ async function loadComponent(id, path) {
   const res = await fetch(path);
   const html = await res.text();
   document.getElementById(id).innerHTML = html;
-  
+
+  if (id === 'navbar') {
+    setupNavbarToggle();
+  }
+
   // Khusus untuk UV Check, load script dan jalankan
   if (id === 'UVCheck') {
     loadUVCheckScript();
+  }
+}
+
+function setupNavbarToggle() {
+  const toggleBtn = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (toggleBtn && mobileMenu) {
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.contains('hidden');
+
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        void mobileMenu.offsetWidth;
+        mobileMenu.classList.remove('-translate-y-5', 'opacity-0');
+        mobileMenu.classList.add('translate-y-0', 'opacity-100');
+
+        toggleBtn.classList.add('rotate-90');
+        toggleBtn.innerText = '✕'; // ubah ke silang
+      } else {
+        mobileMenu.classList.remove('translate-y-0', 'opacity-100');
+        mobileMenu.classList.add('-translate-y-5', 'opacity-0');
+
+        toggleBtn.classList.remove('rotate-90');
+        toggleBtn.innerText = '☰'; // ubah balik ke hamburger
+
+        setTimeout(() => {
+          mobileMenu.classList.add('hidden');
+        }, 300);
+      }
+    });
   }
 }
 
@@ -57,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fileLabel.textContent = file.name;
 
       const reader = new FileReader();
-      reader.onload = function(evt) {
+      reader.onload = function (evt) {
         cameraPlaceholder.innerHTML = `
           <img
             src="${evt.target.result}"
