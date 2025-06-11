@@ -54,6 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmPassword = document.getElementById("confirm-password");
   const signUpBtn = document.getElementById("sign-up-button");
   const loginForm = document.getElementById("loginForm");
+  const profileNameEl = document.getElementById("profile-name");
+  const profileGenderEl = document.getElementById("profile-gender");
+  const profileAddressEl = document.getElementById("profile-address");
+  const profileAgeEl = document.getElementById("profile-age");
+  const profilePictureEl = document.getElementById("profile-picture");
+  const historySectionContent = document.getElementById("history-section-content");
 
   let uploadedImage = null;
 
@@ -271,4 +277,152 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Terjadi kesalahan saat login.");
       }
     });
-  });
+
+    if (window.location.pathname.includes("/profile.html")) {
+      const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      alert("Anda harus login untuk melihat halaman profil.");
+      window.location.href = "/login.html"; // Arahkan ke halaman login jika tidak ada token
+      return;
+    }
+
+    // Fungsi untuk mengambil dan menampilkan data profil pengguna
+    async function fetchAndDisplayProfileData() {
+      try {
+        // Ganti URL '/api/user/profile' dengan endpoint API Anda yang sebenarnya
+        const response = await fetch("http://localhost:3000/get-result", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            alert("Sesi Anda tidak valid atau telah berakhir. Silakan login kembali.");
+            sessionStorage.removeItem("token");
+            window.location.href = "/login.html";
+          }
+          throw new Error(`Gagal mengambil data profil: ${response.statusText}`);
+        }
+
+        const profileData = await response.json();
+
+        if (profileNameEl) profileNameEl.textContent = `${profileData.firstName} ${profileData.lastName}`;
+        if (profileGenderEl) profileGenderEl.textContent = profileData.gender || "-"; // Asumsi backend mengirim 'gender'
+        if (profileAddressEl) profileAddressEl.textContent = profileData.address || "-"; // Asumsi backend mengirim 'address'
+        if (profileAgeEl) profileAgeEl.textContent = profileData.age || "-"; // Asumsi backend mengirim 'age'
+        if (profilePictureEl && profileData.profilePictureUrl) {
+          profilePictureEl.src = profileData.profilePictureUrl;
+        }
+        // Jika tidak ada profilePictureUrl, biarkan gambar default
+
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+        if (profileNameEl) profileNameEl.textContent = "Gagal memuat data profil.";
+      }
+    }
+
+    // Fungsi untuk mengambil dan menampilkan riwayat pemeriksaan
+    async function fetchAndDisplayHistoryData() {
+      if (!historySectionContent) return;
+      historySectionContent.innerHTML = '<p class="text-center">Memuat riwayat...</p>'; // Loading state
+
+      try {
+        const response = await fetch(`http://localhost:3000/get-result`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Gagal mengambil riwayat pemeriksaan: ${response.statusText}`);
+        }
+
+        const historyList = await response.json();
+        const result = historyList.results;
+        historySectionContent.innerHTML = ""; // Bersihkan loading state atau riwayat sebelumnya
+
+        if (result.length === 0) {
+          historySectionContent.innerHTML = '<p class="text-center text-gray-500">Belum ada riwayat pemeriksaan.</p>';
+          return;
+        }
+
+        result.forEach(item => {
+          const date = new Date(item.createdAt._seconds * 1000 + item.createdAt._nanoseconds / 1000000); // Sesuaikan dengan field tanggal dari backend Anda
+          console.log(date);
+          console.log(item.createdAt);
+          const formattedDate = `${date.getDate()} ${date.toLocaleString('id-ID', { month: 'long' })} ${date.getFullYear()}`;
+          const riskColor = item.risk === "Kanker" ? "text-red-600" : "text-green-600";
+
+          const historyCardHtml = `
+            <div class="bg-white rounded-lg shadow-md p-[40px] flex justify-between items-start gap-6">
+                <div>
+                    <p class="text-xl font-semibold mb-2">Hasil: ${item.name || 'Tidak Diketahui'}</p>
+                    <div class="flex items-center text-gray-600 gap-2 mb-1">
+                        <span>📅</span> <span>${formattedDate}</span>
+                    </div>
+                    <p class="text-gray-700">
+                        Risiko: <span class="${riskColor} font-bold">${item.risk}</span>
+                    </p>
+                     <p class="text-gray-700">
+                        Status: <span class="font-bold">${item.status || '-'}</span>
+                    </p>
+                </div>
+                <div class="text-right self-end">
+                    <button data-result='${JSON.stringify(item)}' class="view-detail-btn text-sm text-blue-600 hover:underline flex items-center gap-1">
+                        Lihat Detail <span>↗</span>
+                    </button>
+                </div>
+            </div>
+          `;
+          historySectionContent.insertAdjacentHTML('beforeend', historyCardHtml);
+        });
+        
+        // Tambahkan event listener untuk tombol "Lihat Detail" yang baru dibuat
+        document.querySelectorAll('.view-detail-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+              const resultDataString = e.currentTarget.getAttribute('data-result');
+              try {
+                const resultData = JSON.parse(resultDataString);
+                // Simpan data spesifik ini ke localStorage untuk ditampilkan di hasil.html
+                localStorage.setItem('predictionResult', JSON.stringify({
+                  name: resultData.name,
+                  risk: resultData.risk,
+                  status: resultData.status,
+                  saran: resultData.saran || "Saran tidak tersedia untuk riwayat ini.", // Saran mungkin tidak disimpan di histori
+                }));
+                // Jika gambar disimpan di histori dan ingin ditampilkan
+                if (resultData.image) {
+                    localStorage.setItem('uploadedImage', resultData.image);
+                } else {
+                    localStorage.removeItem('uploadedImage'); // Atau set placeholder
+                }
+                window.location.href = '/hasil.html';
+              } catch (parseError) {
+                  console.error("Gagal memparsing data hasil:", parseError);
+                  alert("Tidak dapat menampilkan detail hasil.");
+              }
+            });
+          });
+
+      } catch (error) {
+        console.error("Error fetching history data:", error);
+        historySectionContent.innerHTML = '<p class="text-center text-red-500">Gagal memuat riwayat pemeriksaan.</p>';
+      }
+    }
+
+    // Panggil fungsi untuk mengambil data saat halaman profil dimuat
+    fetchAndDisplayProfileData();
+    fetchAndDisplayHistoryData(); // Default filter "all"
+
+    // Tambahkan event listener untuk filter jika ada
+    filterSelectEl?.addEventListener('change', (e) => {
+        fetchAndDisplayHistoryData(e.target.value);
+    });
+  }
+});
