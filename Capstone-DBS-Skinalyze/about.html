@@ -14,55 +14,62 @@
     <!-- Hero Section -->
     <section class="relative w-full h-[435px]">
         <img src="/assets/heroAbout.png" alt="hero" class="w-full h-full object-cover">
-        <div class="absolute inset-0 flex items-center justify-center text-white text-center px-4">
+        <div class="absolute inset-0 flex items-center justify-center text-white text-center px-4 sm:px-6 xl:px-0">
             <div class="max-w-2xl">
                 <h1 class="text-[56px] font-semibold mb-4">About us</h1>
-                <p class="text-[18px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                <p class="text-[18px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Sed do eiusmod tempor
                     incididunt ut labore et dolore magna aliqua. </p>
             </div>
         </div>
     </section>
 
     <!-- Wrapper utama -->
-    <section class="w-full flex flex-row justify-center mt-[113px] px-4">
-        <div class="grid grid-cols-2 gap-[35px] items-center w-full max-w-[1200px]">
-            <div class="text-left">
-                <h2 class="text-[84px] font-normal mb-4">Lorem Ipsum Dolor Sit Amet</h2>
-                <p class="text-[18px] text-gray-600">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat.
+    <section class="w-full flex justify-center mt-[113px] px-4 sm:px-6 xl:px-0">
+        <div class="flex flex-col lg:flex-row justify-between gap-[79px] items-center max-w-[1200px] w-full">
+            <div class="w-full lg:w-1/2 text-left">
+                <h2 class="text-5xl md:text-7xl xl:text-[96px] font-semibold mb-0 ">Skinalyze</h2>
+                <h3 class="text-3xl md:text-4xl xl:text-[48px] font-normal mb-8 lg:mb-12">Teknologi untuk Kesehatan
+                    Kulit Anda
+                </h3>
+                <p class="text-lg md:text-[18px] text-gray-600 mb-8 lg:mb-12">
+                    Skinalyze memanfaatkan teknologi Machine Learning untuk menganalisis kondisi kulit dari foto yang
+                    diunggah. Dengan sistem pintar ini, pengguna dapat mengetahui kemungkinan awal adanya kelainan kulit
+                    secara cepat, mudah, dan gratis.
                 </p>
+                <button class="bg-[#2E5077] font-bold py-3 px-12 w-fit rounded-sm">
+                    <a href="/skin-check.html" class="text-white">Check Now</a>
+                </button>
             </div>
-            <!-- Gambar -->
-            <div class="flex justify-end">
-                <img src="/assets/img1.png" class="w-full max-w-[600px] object-contain">
+            <div class="w-full lg:w-1/2 flex justify-center">
+                <img src="/assets/img1.png" class="w-full lg:max-w-[553px] h-auto">
             </div>
         </div>
     </section>
 
-    <section class="max-w-[1200px] mx-auto mt-[113px] grid md:grid-cols-3 gap-6">
+    <section class="max-w-[1200px] mx-auto mt-[113px] grid lg:grid-cols-3 gap-6 px-4 sm:px-6 xl:px-0 items-center">
         <div
-            class="h-[371px] bg-teal-300 flex flex-col items-center justify-center text-center p-6 rounded-[20px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]">
-            <div class="w-32 h-32 mx-auto bg-white rounded-full mb-4"></div>
-            <p class="text-base text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
+            class="h-[371px] bg-white flex flex-col items-center justify-center text-center p-6 rounded-[20px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]">
+            <div class="mb-4"><img src="/assets/iconAbout1.png" alt="Deteksi Dini"></div>
+            <p class="text-base text-gray-600">Membantu masyarakat mendeteksi kanker kulit sejak dini melalui
+                teknologi
+                yang mudah diakses dan dapat digunakan oleh siapa saja.</p>
         </div>
         <div
             class="h-[371px] bg-white flex flex-col items-center justify-center text-center p-6 rounded-[20px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]">
-            <div class="w-32 h-32 mx-auto bg-teal-300 rounded-full mb-4"></div>
-            <p class="text-base text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
+            <div class="mb-4"><img src="/assets/iconAbout2.png" alt="Machine Learning"></div>
+            <p class="text-base text-gray-600">Skinalyze menggunakan model yang telah dilatih menggunakan machine
+                learning untuk mengenali kelainan kulit secara akurat dan otomatis</p>
         </div>
         <div
             class="h-[371px] bg-white flex flex-col items-center justify-center text-center p-6 rounded-[20px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.25)]">
-            <div class="w-32 h-32 mx-auto bg-teal-300 rounded-full mb-4"></div>
-            <p class="text-base text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
+            <div class="mb-4"><img src="/assets/iconAbout3.png" alt="Antarmuka Ramah Pengguna"></div>
+            <p class="text-base text-gray-600">Antarmuka yang ramah pengguna dan berbasis web, Skinalyze dapat digunakan
+                oleh siapa pun, kapan pun, tanpa perlu keahlian medis.</p>
         </div>
     </section>
 
-    <section class="w-full flex justify-center my-[166px] ">
+    <section class="w-full flex justify-center my-[166px] px-4 sm:px-6 xl:px-0">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-[60px] items-center max-w-[1200px] w-full">
 
             <!-- Kolom kiri: Gambar -->
@@ -105,8 +112,8 @@
     </section>
 
 
-    <footer>
-        <p>&copy; 2025 Skinalyze Team</p>
+    <footer class="w-full">
+        <div id="footer" class="mt-auto"></div>
     </footer>
 
     <!-- Script untuk menyisipkan navbar -->
