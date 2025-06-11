@@ -1,51 +1,84 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Skinalyze - Artikel</title>
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body class="flex flex-col min-h-screen">
-    <div id="navbar"></div>
 
-    <!-- TODO: Tambah bisa ngambil isi artikel dari db or sum shit, gua lupa kayak gimana nanti -->
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skinalyze - Artikel</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
 
-    <div
-      class="container mx-auto py-8 flex flex-col justify-center px-4 max-w-9xl"
-    >
-      <h2 class="text-4xl text-black font-semibold mb-6 items-start">
-        Artikel
-      </h2>
-      <div class="result bg-white rounded-lg p-6 w-full">
-        <p class="text-black mb-4">Selasa, 14 Mei 2025</p>
-        <img
-          src="/assets/artikel-image-card.jpg"
-          alt="Gambar Artikel.jpg"
-          class="w-full h-500px mb-10"
-        />
-        <p class="text-black mb-4">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam a dui
-          aliquam, semper leo sit amet, congue erat. Etiam nisl ligula, dictum
-          eget aliquam eu, laoreet a massa. Nulla eget ligula arcu. Duis blandit
-          arcu libero, nec dapibus leo mattis sit amet. Aliquam auctor nibh
-          mauris, vel facilisis lectus mollis laoreet. Integer vitae
-          sollicitudin tortor. In eget nibh fringilla, posuere dolor non,
-          volutpat orci. Morbi nibh ligula, ornare ac dictum in, suscipit in
-          purus. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-          Phasellus venenatis metus quis dapibus pellentesque. Nulla volutpat
-          venenatis tempor. Nunc sagittis ex sem, vel semper massa malesuada
-          eget. Ut bibendum erat vitae tellus vestibulum, ac eleifend ex
-          pretium. Donec semper sapien sed egestas fringilla. Curabitur
-          vestibulum finibus varius. Fusce rutrum justo at eros ornare, at
-          lobortis magna facilisis.
-        </p>
-      </div>
+<body>
+  <div id="navbar"></div>
+
+  <div class="container mx-auto py-8 flex flex-col justify-center px-4 sm:px-6 xl:px-0 max-w-[1200px]">
+    <h2 class="text-2xl sm:text-3xl text-black font-semibold mb-6 flex items-center gap-2">
+      <svg class="w-6 h-6 sm:w-7 text-[#2E5077] transition-transform transform cursor-pointer" fill="none"
+        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" onclick="history.back()">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+      Artikel
+    </h2>
+
+
+    <div class="result bg-white rounded-lg w-full max-w-4xl  ">
+      <h1 class="text-3xl sm:text-5xl text-black font-bold mb-2 items-start">Kanker Kulit : Gejala, Penyebab, dan
+        Penanganan</h2>
+        <p class="text-[#939393] text-lg sm:text-2xl">Selasa, 14 Mei 2025</p>
+        <img src="/assets/artikel-image-card.jpg" alt="Gambar Artikel.jpg"
+          class="w-full rounded-md mt-10 mb-10 object-cover" />
+        <div class="text-black space-y-6 text-justify text-base sm:text-lg leading-relaxed">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam a dui aliquam, semper leo sit amet, congue
+            erat. Etiam nisl ligula, dictum eget aliquam eu, laoreet a massa. Nulla eget ligula arcu. Duis blandit arcu
+            libero, nec dapibus leo mattis sit amet. Aliquam auctor nibh mauris, vel facilisis lectus mollis laoreet.
+            Integer vitae sollicitudin tortor. In eget nibh fringilla, posuere dolor non, volutpat orci. Morbi nibh
+            ligula, ornare ac dictum in, suscipit in purus. Interdum et malesuada fames ac ante ipsum primis in
+            faucibus.
+            Phasellus venenatis metus quis dapibus pellentesque. Nulla volutpat venenatis tempor. Nunc sagittis ex sem,
+            vel semper massa malesuada eget. Ut bibendum erat vitae tellus vestibulum, ac eleifend ex pretium. Donec
+            semper sapien sed egestas fringilla. Curabitur vestibulum finibus varius. Fusce rutrum justo at eros ornare,
+            at lobortis magna facilisis.
+          </p>
+          <p>Quisque eu consequat metus. Nulla vestibulum neque ante, quis imperdiet risus dictum et. Sed nec volutpat
+            lectus, in vehicula ipsum. Vivamus nulla nibh, gravida vitae mollis eget, venenatis in quam. Aenean ut
+            bibendum justo. Sed rutrum massa placerat ligula gravida laoreet. Sed et augue eu risus tempor maximus. Ut
+            nec
+            tempor est. Pellentesque egestas consequat elit, vel bibendum lacus faucibus vitae. Etiam eu nibh turpis.
+            Aenean sagittis nulla eget felis dignissim, non mollis metus ullamcorper. Donec sodales viverra magna ut
+            semper. Nullam urna purus, volutpat quis nisl vel, suscipit malesuada lacus. Interdum et malesuada fames ac
+            ante ipsum primis in faucibus. Ut quam diam, congue sed aliquam vel, posuere accumsan nisl.
+            Cras vel mauris tincidunt, lacinia mauris nec, facilisis mi. Vestibulum blandit euismod gravida. Vivamus
+            gravida congue velit, id laoreet quam luctus vel. Nunc mollis semper nunc, vitae malesuada turpis sodales
+            vel.
+            Quisque eget elementum turpis, vitae pretium diam. Cras condimentum vel quam sed ultrices. Sed tincidunt
+            ligula et elementum accumsan. Nulla facilisi. Quisque ut placerat quam. Vestibulum ac cursus massa, in
+            dictum
+            augue. Quisque posuere lorem nec finibus dignissim. Fusce ligula libero, rutrum eget dolor a, semper aliquet
+            dui. Suspendisse potenti. Cras elit tortor, commodo sit amet consectetur in, ultrices in sem.
+          </p>
+          <p>Nullam venenatis ante vitae dolor venenatis mollis. Fusce turpis diam, faucibus at lacus at, venenatis
+            blandit
+            mi. Nam vitae odio vitae dui dictum imperdiet. Quisque egestas porta pellentesque. Nam nulla justo,
+            tincidunt
+            sollicitudin nisl non, malesuada interdum ipsum. Curabitur vitae volutpat ex. Aenean commodo eros orci, et
+            vehicula justo sodales a. Integer odio nisl, dignissim non elementum vel, porta et erat. Nam vitae
+            scelerisque
+            risus. Cras mollis nulla non risus laoreet egestas vel quis tortor. Vestibulum ut massa vitae leo sodales
+            lobortis. Aliquam non lacus odio. Cras scelerisque scelerisque nisi, sit amet sodales mauris posuere in. In
+            convallis felis eu odio maximus, sit amet dapibus lectus ullamcorper.
+          </p>
+        </div>
+
     </div>
+  </div>
 
-    <div id="footer" class="mt-auto"></div>
 
-    <script type="module" defer src="/src/main.js"></script>
-  </body>
+  <div id="footer" class="mt-auto"></div>
+
+
+  <script type="module" defer src="/src/main.js"></script>
+</body>
+
 </html>
