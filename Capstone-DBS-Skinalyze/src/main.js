@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = labelMap[resultIndex];
 
       const saveResultToFirestore = await fetch(
-        "http://localhost:3000/save-result",
+        "https://back-end-skinalyze.vercel.app/save-result",
         {
           method: "POST",
           headers: {
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       const groqResponse = await fetch(
-        "http://localhost:3000/get-groq-advice",
+        "https://back-end-skinalyze.vercel.app/get-groq-advice",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/signup", {
+      const response = await fetch("https://back-end-skinalyze.vercel.app/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -387,7 +387,7 @@ loginForm?.addEventListener("submit", async (e) => {
 
   try {
     // Panggil endpoint login di backend Anda
-    const response = await fetch("http://localhost:3000/api/login", { // Sesuaikan path jika berbeda
+    const response = await fetch("https://back-end-skinalyze.vercel.app/api/login", { // Sesuaikan path jika berbeda
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -443,7 +443,7 @@ loginForm?.addEventListener("submit", async (e) => {
 
     async function fetchAndDisplayProfileData() {
       try {
-        const response = await fetch("http://localhost:3000/get-profile", {
+        const response = await fetch("https://back-end-skinalyze.vercel.app/get-profile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -489,7 +489,7 @@ loginForm?.addEventListener("submit", async (e) => {
         '<p class="text-center">Memuat riwayat...</p>';
 
       try {
-        const response = await fetch(`http://localhost:3000/get-result`, {
+        const response = await fetch(`https://back-end-skinalyze.vercel.app/get-result`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
