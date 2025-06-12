@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -59,4 +58,54 @@
   <script type="module" defer src="/src/main.js"></script>
 </body>
 
+    <script>
+        // Get all the elements we need to update
+        const namaEl = document.getElementById('hasil-nama');
+        const risikoEl = document.getElementById('hasil-risiko');
+        const statusEl = document.getElementById('hasil-status');
+        const saranEl = document.getElementById('hasil-saran');
+        const previewEl = document.getElementById('preview-image');
+        const checkAgainBtn = document.getElementById('check-again');
+        
+        // Retrieve the data from localStorage
+        const result = JSON.parse(localStorage.getItem('predictionResult') || '{}');
+        const savedImage = localStorage.getItem('uploadedImage');
+
+        // Populate the page with the data
+        namaEl.textContent = result.name || 'Tidak diketahui';
+        risikoEl.textContent = result.risk || 'Tidak diketahui';
+        statusEl.textContent = result.status || 'Tidak diketahui';
+        saranEl.textContent = result.saran || 'Tidak ada saran yang tersedia.';
+
+        // --- Logic Improvements ---
+
+        // 1. Dynamically set text color for risk and status
+        // First, remove any default color classes
+        risikoEl.classList.remove('text-green-600', 'text-red-600');
+        statusEl.classList.remove('text-green-600', 'text-red-600');
+
+        if (result.status === 'Berbahaya') {
+            statusEl.classList.add('text-red-600');
+        } else {
+            statusEl.classList.add('text-green-600');
+        }
+
+        if (result.risk === 'Kanker') {
+            risikoEl.classList.add('text-red-600');
+        } else {
+            risikoEl.classList.add('text-green-600');
+        }
+
+        // 2. Display the uploaded image
+        if (savedImage) {
+          previewEl.src = savedImage;
+        }
+
+        // 3. Add event listener for the "Check Again" button
+        checkAgainBtn?.addEventListener('click', () => {
+          window.location.href = '/skin-check.html'; // Or your main page URL
+        });
+      });
+    </script>
+  </body>
 </html>

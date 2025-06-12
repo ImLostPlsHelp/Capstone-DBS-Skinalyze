@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/src/style.css" />
 </head>
 
-<body>
+<body class="flex flex-col min-h-screen">
     <header class="w-full">
         <div id="navbar"></div>
     </header>
@@ -49,58 +49,9 @@
                 </div>
             </div>
 
-            <!-- Riwayat Card -->
-            <div
-                class="bg-white rounded-lg shadow-md p-6 sm:p-[40px] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
-                <div class="w-full sm:w-auto">
-                    <p class="text-lg sm:text-xl font-semibold mb-2">Hasil Pemeriksaan Terakhir</p>
-                    <div class="flex items-center text-gray-600 gap-2 mb-1">
-                        <span>📅</span> <span>14 Mei 2025</span>
-                    </div>
-                    <p class="text-gray-700">
-                        Risiko: <span class="text-green-600 font-bold">Bukan Kanker</span>
-                    </p>
-                </div>
-                <div class="text-left sm:text-right w-full sm:w-auto self-start sm:self-end">
-                    <a href="#" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                        Lihat Detail <span>↗</span>
-                    </a>
-                </div>
-            </div>
-            <div
-                class="bg-white rounded-lg shadow-md p-6 sm:p-[40px] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
-                <div class="w-full sm:w-auto">
-                    <p class="text-lg sm:text-xl font-semibold mb-2">Hasil Pemeriksaan Terakhir</p>
-                    <div class="flex items-center text-gray-600 gap-2 mb-1">
-                        <span>📅</span> <span>14 Mei 2025</span>
-                    </div>
-                    <p class="text-gray-700">
-                        Risiko: <span class="text-green-600 font-bold">Bukan Kanker</span>
-                    </p>
-                </div>
-                <div class="text-left sm:text-right w-full sm:w-auto self-start sm:self-end">
-                    <a href="#" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                        Lihat Detail <span>↗</span>
-                    </a>
-                </div>
-            </div>
-            <div
-                class="bg-white rounded-lg shadow-md p-6 sm:p-[40px] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
-                <div class="w-full sm:w-auto">
-                    <p class="text-lg sm:text-xl font-semibold mb-2">Hasil Pemeriksaan Terakhir</p>
-                    <div class="flex items-center text-gray-600 gap-2 mb-1">
-                        <span>📅</span> <span>14 Mei 2025</span>
-                    </div>
-                    <p class="text-gray-700">
-                        Risiko: <span class="text-green-600 font-bold">Bukan Kanker</span>
-                    </p>
-                </div>
-                <div class="text-left sm:text-right w-full sm:w-auto self-start sm:self-end">
-                    <a href="#" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                        Lihat Detail <span>↗</span>
-                    </a>
-                </div>
-            </div>
+            <div id="history-section-content" class="space-y-6">
+                <!-- Kartu riwayat akan dimasukkan di sini oleh JavaScript -->
+           </div>
 
 
 
@@ -108,7 +59,7 @@
         </section>
     </main>
 
-    <div id="footer"></div>
+    <div id="footer" class="mt-auto"></div>
 
 
     <!-- Script untuk menyisipkan navbar -->
