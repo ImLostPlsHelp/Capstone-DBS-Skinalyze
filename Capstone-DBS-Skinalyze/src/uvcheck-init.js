@@ -1,6 +1,6 @@
 // UV Check Initialization Script
 function initUVCheck() {
-  const apiKey = 'a80c4bd61519d218f5a6caf909efdeb7';
+  const apiKey = process.env.WEATHER_API_KEY;
   
   const statusEl = document.getElementById('status');
   const uvInfoEl = document.getElementById('uv-info');
