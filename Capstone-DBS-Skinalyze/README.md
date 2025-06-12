@@ -1,5 +1,7 @@
 # Skinalyze - Deteksi Dini Kanker Kulit dengan Model Convolutional Neural Network berbasis Website Responsif.
 
+# Live Demo
+
 # Fitur
 
 - **Deteksi Kanker Kulit**: Upload gambar dan dapatkan analisis menggunakan model machine learning
@@ -27,51 +29,30 @@
 
 # Installation & Setup
 
-# Clone Repository
+## Clone Repository
 
-git clone https://github.com/your-username/Capstone-DBS-Skinalyze.git
+git clone https://github.com/ImLostPlsHelp/Capstone-DBS-Skinalyze.git
 cd Capstone-DBS-Skinalyze
 
-# Install Dependencies
+## Install Dependencies
 
 npm install
 
-# Dependencies yang dibutuhkan:
+## Dependencies yang dibutuhkan:
 
 npm install express groq-sdk dotenv firebase @tensorflow/tfjs vite
 
-# Setup Environment Variables
+## Setup Environment Variables
 
 Buat file `.env` di root directory:
 
 env
 
-# Groq AI API Key
-
-GROQ_API_KEY=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
-
-# Server Port
+## Server Port
 
 PORT=8000
 
-# OpenWeatherMap API
-
-OPENWEATHER_API_KEY=a80c4bd61519d218f5a6caf909efdeb7
-
-# Firebase Configuration
-
-Buat file `src/config.js`:
-
-const CONFIG = {
-API_KEY: "your_firebase_api_key",
-DOMAIN: "your_project.firebaseapp.com",
-PROJECTID: "your_project_id",
-APPID: "your_app_id"
-};
-
-export default CONFIG;
-
-# Model Machine Learning
+## Model Machine Learning
 
 Pastikan model TensorFlow.js tersedia di folder `public/model/`:
 
@@ -81,16 +62,16 @@ public/
 ├── weights.bin
 └── metadata.json
 
-# Running the Application
+## Running the Application
 
-# Start Backend Server
+## Start Backend Server
 
 node server.js
 
 Output yang diharapkan:
 Server running on port 8000
 
-# Start Frontend (Terminal Baru)
+## Start Frontend
 
 npm run dev
 
