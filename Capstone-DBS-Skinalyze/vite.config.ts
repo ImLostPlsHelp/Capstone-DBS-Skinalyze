@@ -18,7 +18,7 @@ export default defineConfig({
         artikel: resolve(__dirname, 'artikel.html'),
         faq: resolve(__dirname, 'faq.html'),
         hasil: resolve(__dirname, 'hasil.html'),
-        login: resolve(__dirname, 'login.html'),
+        login: resolve(__dirname, 'loginPage.html'),
         register: resolve(__dirname, 'register.html'),
         profile: resolve(__dirname, 'profile.html'),
         about: resolve(__dirname, 'about.html'),
