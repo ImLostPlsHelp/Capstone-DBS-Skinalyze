@@ -387,7 +387,7 @@ loginForm?.addEventListener("submit", async (e) => {
 
   try {
     // Panggil endpoint login di backend Anda
-    const response = await fetch("http://0.0.0.0:10000/api/login", { // Sesuaikan path jika berbeda
+    const response = await fetch("https://back-end-skinalyze.onrender.com/api/login", { // Sesuaikan path jika berbeda
       method: "POST",
       headers: {
         "Content-Type": "application/json",
