@@ -312,6 +312,10 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      const loginButton = document.getElementById("login-button");
+      loginButton.disabled = true;
+      loginButton.textContent = "Memproses...";
+
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
@@ -335,6 +339,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error:", error);
         alert("Terjadi kesalahan saat login.");
       }
+
+      loginButton.disabled = false;
+      loginButton.textContent = "Login";
     });
 
     if (window.location.pathname.includes("/profile.html")) {
