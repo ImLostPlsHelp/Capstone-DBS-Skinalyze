@@ -32,10 +32,52 @@ async function loadComponent(id, path) {
 
   if (id === "navbar") {
     setupNavbarToggle();
+    updateNavbarBasedOnLoginStatus();
   }
 
   if (id === "UVCheck") {
     loadUVCheckScript();
+  }
+}
+
+function handleLogout() {
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("userName");
+
+  alert("Anda telah logout.");
+  window.location.href = "/login.html";
+}
+
+function updateNavbarBasedOnLoginStatus() {
+  const getInTouch = document.getElementById("get-in-touch-link");
+  const token = sessionStorage.getItem("token");
+  const firstName = sessionStorage.getItem("firstName");
+  const lastName = sessionStorage.getItem("lastName");
+  const userName = firstName && lastName ? `${firstName} ${lastName}` : null;
+
+  const loginLink = document.getElementById("login-link");
+  const userGreeting = document.getElementById("navbar-user-greeting");
+  const logoutButton = document.getElementById("navbar-logout-button");
+
+  if (token && userName) {
+    if (loginLink) loginLink.style.display = "none";
+    getInTouch.style.display = "none";
+
+    if (userGreeting) {
+      userGreeting.textContent = `Halo, ${userName}!`;
+      userGreeting.style.display = "inline";
+    }
+    if (logoutButton) {
+      logoutButton.style.display = "inline";
+      logoutButton.removeEventListener('click', handleLogout);
+      logoutButton.addEventListener('click', handleLogout);
+    }
+  } else {
+    // Pengguna dianggap belum login
+    if (loginLink) loginLink.style.display = "inline";
+
+    if (userGreeting) userGreeting.style.display = "none";
+    if (logoutButton) logoutButton.style.display = "none";
   }
 }
 
@@ -122,18 +164,15 @@ document.addEventListener("DOMContentLoaded", () => {
     "history-section-content"
   );
 
-  let uploadedImageObject = null; // Untuk menyimpan objek Image untuk predictSkinType
-  // Tidak perlu lagi menyimpan base64 mentah di variabel global jika sudah di localStorage
+  let uploadedImageObject = null;
 
   uploadBtn?.addEventListener("click", () => {
     fileInput?.click();
   });
 
-  // Handle file input - LAKUKAN KOMPRESI DI SINI
-  fileInput?.addEventListener("change", async (e) => { // Jadikan async
+  fileInput?.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      // Bersihkan jika tidak ada file dipilih
       fileLabel.textContent = "No Files Chosen.jpg";
       cameraPlaceholder.innerHTML = '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
       localStorage.removeItem("uploadedImage");
@@ -145,10 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
     cameraPlaceholder.innerHTML = '<p class="text-center">Mengompres gambar...</p>';
 
     const options = {
-      maxSizeMB: 0.5, // Target ukuran file setelah kompresi
-      maxWidthOrHeight: 1200, // Batas resolusi
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 1200,
       useWebWorker: true,
-      // onProgress: (progress) => { console.log(`Compression progress: ${progress}%`); }
     };
 
     try {
@@ -156,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const compressedFile = await imageCompression(file, options); // Kompres File object
       console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
 
-      fileLabel.textContent = compressedFile.name; // Tampilkan nama file (mungkin sama atau baru)
+      fileLabel.textContent = compressedFile.name;
 
       const reader = new FileReader();
       reader.onload = (evt) => {
@@ -327,40 +365,72 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  loginForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
+loginForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const loginButton = document.getElementById("login-button");
-    loginButton.disabled = true;
-    loginButton.textContent = "Memproses...";
+  const loginButton = document.getElementById("login-button");
+  loginButton.disabled = true;
+  loginButton.textContent = "Memproses...";
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
 
-    if (!email || !password) {
-      alert("Mohon isi semua field.");
-      return;
-    }
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
 
-    try {
-      const auth = getAuth(app);
-      await signInWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      if (user) {
-        const idToken = await getIdToken(user);
-        sessionStorage.setItem("token", idToken);
-        window.location.href = "/index.html";
-      } else {
-        alert("Login gagal. Periksa kembali email dan password.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Terjadi kesalahan saat login.");
-    }
-
+  if (!email || !password) {
+    alert("Mohon isi semua field.");
     loginButton.disabled = false;
     loginButton.textContent = "Login";
-  });
+    return;
+  }
+
+  try {
+    // Panggil endpoint login di backend Anda
+    const response = await fetch("http://localhost:3000/api/login", { // Sesuaikan path jika berbeda
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Login berhasil, backend mengembalikan data pengguna termasuk token
+      if (data.user && data.user.token) {
+        sessionStorage.setItem("token", data.user.token);
+        // Anda juga bisa menyimpan data lain jika diperlukan, misalnya nama pengguna
+        if (data.user.firstName) {
+          sessionStorage.setItem("firstName", data.user.firstName);
+        }
+        if (data.user.lastName) {
+          sessionStorage.setItem("lastName", data.user.lastName);
+        }
+        // Simpan UID jika diperlukan untuk referensi di frontend tanpa decode token
+        if (data.user.uid) {
+            sessionStorage.setItem("uid", data.user.uid);
+        }
+
+        alert(data.message || "Login berhasil!");
+        window.location.href = "/index.html"; // Arahkan ke halaman utama atau dashboard
+      } else {
+        // Respons OK tapi tidak ada token atau data user
+        alert(data.error || "Login gagal. Data pengguna tidak lengkap.");
+      }
+    } else {
+      // Login gagal, tampilkan pesan error dari backend
+      alert(data.error || `Login gagal (Status: ${response.status})`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Terjadi kesalahan saat mencoba login. Periksa koneksi Anda.");
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = "Login";
+  }
+});
 
   if (window.location.pathname.includes("/profile.html")) {
     const token = sessionStorage.getItem("token");
