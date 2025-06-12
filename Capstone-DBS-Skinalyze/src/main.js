@@ -144,6 +144,7 @@ loadComponent("footer", "/component/footer.html");
 // UV Check Initialization Script
 function initUVCheck() {
   const apiKey = process.env.WEATHER_API_KEY;
+  console.log(apiKey);
   
   const statusEl = document.getElementById('status');
   const uvInfoEl = document.getElementById('uv-info');
