@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = labelMap[resultIndex];
 
       const saveResultToFirestore = await fetch(
-        "https://back-end-skinalyze.vercel.app/api/save-result",
+        "https://back-end-skinalyze.onrender.com/api/save-result",
         {
           method: "POST",
           headers: {
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       const groqResponse = await fetch(
-        "https://back-end-skinalyze.vercel.app/api/get-groq-advice",
+        "https://back-end-skinalyze.onrender.com/api/get-groq-advice",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("https://back-end-skinalyze.vercel.app/api/signup", {
+      const response = await fetch("https://back-end-skinalyze.onrender.com/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -443,7 +443,7 @@ loginForm?.addEventListener("submit", async (e) => {
 
     async function fetchAndDisplayProfileData() {
       try {
-        const response = await fetch("https://back-end-skinalyze.vercel.app/api/get-profile", {
+        const response = await fetch("https://back-end-skinalyze.onrender.com/api/get-profile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -489,7 +489,7 @@ loginForm?.addEventListener("submit", async (e) => {
         '<p class="text-center">Memuat riwayat...</p>';
 
       try {
-        const response = await fetch(`https://back-end-skinalyze.vercel.app/api/get-result`, {
+        const response = await fetch(`https://back-end-skinalyze.onrender.com/api/get-result`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
