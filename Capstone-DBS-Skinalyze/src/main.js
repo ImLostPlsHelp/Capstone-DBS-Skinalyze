@@ -73,7 +73,6 @@ function updateNavbarBasedOnLoginStatus() {
       logoutButton.addEventListener('click', handleLogout);
     }
   } else {
-    // Pengguna dianggap belum login
     if (loginLink) loginLink.style.display = "inline";
 
     if (userGreeting) userGreeting.style.display = "none";
@@ -96,13 +95,13 @@ function setupNavbarToggle() {
         mobileMenu.classList.add("translate-y-0", "opacity-100");
 
         toggleBtn.classList.add("rotate-90");
-        toggleBtn.innerText = "✕"; // ubah ke silang
+        toggleBtn.innerText = "✕";
       } else {
         mobileMenu.classList.remove("translate-y-0", "opacity-100");
         mobileMenu.classList.add("-translate-y-5", "opacity-0");
 
         toggleBtn.classList.remove("rotate-90");
-        toggleBtn.innerText = "☰"; // ubah balik ke hamburger
+        toggleBtn.innerText = "☰";
 
         setTimeout(() => {
           mobileMenu.classList.add("hidden");
@@ -121,43 +120,19 @@ loadComponent("faq", "/component/faq.html");
 loadComponent("faq-full", "/component/faq-full.html");
 loadComponent("footer", "/component/footer.html");
 
-// // Function untuk memuat dan menjalankan UV Check script
-// function loadUVCheckScript() {
-//   const script = document.createElement("script");
-//   script.src = "/src/uvcheck-init.js";
-//   script.onload = () => {
-//     // Tunggu sebentar untuk memastikan elemen sudah dimuat
-//     setTimeout(() => {
-//       if (typeof window.initUVCheck === "function") {
-//         window.initUVCheck();
-//       } else {
-//         console.error("UV Check function not loaded");
-//       }
-//     }, 100);
-//   };
-//   script.onerror = () => {
-//     console.error("Failed to load UV Check script");
-//   };
-//   document.head.appendChild(script);
-// }
-
-// UV Check Initialization Script
 function initUVCheck() {
   const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-  console.log(apiKey);
   
   const statusEl = document.getElementById('status');
   const uvInfoEl = document.getElementById('uv-info');
   const uvValueEl = document.getElementById('uv-value');
   const uvRecommendationEl = document.getElementById('uv-recommendation');
 
-  // Pastikan elemen ditemukan
   if (!statusEl) {
     console.error('UV Check: Status element not found');
     return;
   }
 
-  // Cek apakah browser mendukung Geolocation API
   if (navigator.geolocation) {
     statusEl.textContent = 'Meminta izin lokasi...';
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
@@ -304,17 +279,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const reader = new FileReader();
       reader.onload = (evt) => {
         const img = new Image();
-        img.src = evt.target.result; // base64 dari gambar TERKOMPRESI
+        img.src = evt.target.result;
         img.className = "w-full h-full object-contain";
-        img.onload = () => (uploadedImageObject = img); // Simpan objek Image untuk predictSkinType
+        img.onload = () => (uploadedImageObject = img);
 
-        // Simpan base64 dari gambar TERKOMPRESI ke localStorage
         localStorage.setItem("uploadedImage", evt.target.result);
 
         cameraPlaceholder.innerHTML = "";
         cameraPlaceholder.appendChild(img);
       };
-      reader.readAsDataURL(compressedFile); // Baca File object yang sudah dikompres
+      reader.readAsDataURL(compressedFile);
 
     } catch (error) {
       console.error("Image compression failed:", error);
@@ -326,7 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Handle "Check Now" button
   checkNowBtn?.addEventListener("click", async () => {
     const compressedBase64Image = localStorage.getItem("uploadedImage");
 
@@ -355,7 +328,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = labelMap[resultIndex];
 
     
-      // Ambil description and advice dari Groq.
       const groqResponse = await fetch(
         "https://back-end-skinalyze.onrender.com/api/get-groq-advice",
         {
@@ -372,15 +344,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const groqData = await groqResponse.json();
       const fullContent = groqData.advice; 
 
-      // Pisah teks deskripsi dan saran
       const separator = '---PEMISAH---';
       let descriptionText = 'Deskripsi tidak tersedia.';
       let adviceText = fullContent; 
 
       if (fullContent.includes(separator)) {
         const parts = fullContent.split(separator);
-        descriptionText = parts[0].trim(); // Part 1 description
-        adviceText = parts[1].trim();      // Part 2 advice
+        descriptionText = parts[0].trim();
+        adviceText = parts[1].trim();
       }
 
       result.deskripsi = descriptionText;
@@ -424,7 +395,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Handle "Check Again" button on result page
   CheckAgainBtn?.addEventListener("click", () => {
     window.location.href = "/skin-check.html";
 
@@ -448,7 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
   signUpBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    // Validasi field
     if (!email || !password || !confirmPassword || !firstName || !lastName) {
       alert("Lengkapi semua data terlebih dahulu!");
       return;
@@ -508,8 +477,7 @@ loginForm?.addEventListener("submit", async (e) => {
   }
 
   try {
-    // Panggil endpoint login di backend Anda
-    const response = await fetch("https://back-end-skinalyze.onrender.com/api/login", { // Sesuaikan path jika berbeda
+    const response = await fetch("https://back-end-skinalyze.onrender.com/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -520,29 +488,24 @@ loginForm?.addEventListener("submit", async (e) => {
     const data = await response.json();
 
     if (response.ok) {
-      // Login berhasil, backend mengembalikan data pengguna termasuk token
       if (data.user && data.user.token) {
         sessionStorage.setItem("token", data.user.token);
-        // Anda juga bisa menyimpan data lain jika diperlukan, misalnya nama pengguna
         if (data.user.firstName) {
           sessionStorage.setItem("firstName", data.user.firstName);
         }
         if (data.user.lastName) {
           sessionStorage.setItem("lastName", data.user.lastName);
         }
-        // Simpan UID jika diperlukan untuk referensi di frontend tanpa decode token
         if (data.user.uid) {
             sessionStorage.setItem("uid", data.user.uid);
         }
 
         alert(data.message || "Login berhasil!");
-        window.location.href = "/index.html"; // Arahkan ke halaman utama atau dashboard
+        window.location.href = "/index.html";
       } else {
-        // Respons OK tapi tidak ada token atau data user
         alert(data.error || "Login gagal. Data pengguna tidak lengkap.");
       }
     } else {
-      // Login gagal, tampilkan pesan error dari backend
       alert(data.error || `Login gagal (Status: ${response.status})`);
     }
   } catch (error) {
