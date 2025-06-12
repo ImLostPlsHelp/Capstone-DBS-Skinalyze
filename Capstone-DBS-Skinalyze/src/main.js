@@ -353,31 +353,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const result = labelMap[resultIndex];
 
-      const saveResultToFirestore = await fetch(
-        "https://back-end-skinalyze.onrender.com/api/save-result",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            name: result.name,
-            risk: result.risk,
-            status: result.status,
-            image: compressedBase64Image,
-          }),
-        }
-      );
-
-      if (!saveResultToFirestore.ok) {
-        const errorData = await saveResultToFirestore.json();
-        console.error("Failed to save result to Firestore:", errorData);
-        throw new Error(`Gagal menyimpan hasil ke Firestore: ${errorData.message || saveResultToFirestore.statusText}`);
-      }
-      console.log("Result saved to Firestore successfully.");
-
-
+    
+      // Ambil description and advice dari Groq.
       const groqResponse = await fetch(
         "https://back-end-skinalyze.onrender.com/api/get-groq-advice",
         {
@@ -392,7 +369,47 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const groqData = await groqResponse.json();
-      result.saran = groqData.advice;
+      const fullContent = groqData.advice; 
+
+      // Pisah teks deskripsi dan saran
+      const separator = '---PEMISAH---';
+      let descriptionText = 'Deskripsi tidak tersedia.';
+      let adviceText = fullContent; 
+
+      if (fullContent.includes(separator)) {
+        const parts = fullContent.split(separator);
+        descriptionText = parts[0].trim(); // Part 1 description
+        adviceText = parts[1].trim();      // Part 2 advice
+      }
+
+      result.deskripsi = descriptionText;
+      result.saran = adviceText;
+
+      const saveResultToFirestore = await fetch(
+        "https://back-end-skinalyze.onrender.com/api/save-result",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            name: result.name,
+            risk: result.risk,
+            status: result.status,
+            deskripsi: result.deskripsi,
+            saran: result.saran,
+            image: compressedBase64Image,
+          }),
+        }
+      );
+
+      if (!saveResultToFirestore.ok) {
+        const errorData = await saveResultToFirestore.json();
+        console.error("Failed to save result to Firestore:", errorData);
+        throw new Error(`Gagal menyimpan hasil ke Firestore: ${errorData.message || saveResultToFirestore.statusText}`);
+      }
+      console.log("Result saved to Firestore successfully.");
 
       localStorage.setItem("predictionResult", JSON.stringify(result));
       window.location.href = "/hasil.html";

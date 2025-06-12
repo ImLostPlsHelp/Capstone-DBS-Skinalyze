@@ -17,27 +17,25 @@
     </h3>
 
     <div class="mb-6">
-        <p class="text-sm md:text-base font-semibold mb-2">Gambar yang Diupload</p>
-        <img id="preview-image" src="" alt="Hasil Upload" class="max-w-xs rounded shadow border" />
-      </div>
-      
+      <p class="text-sm md:text-base font-semibold mb-2">Gambar yang Diupload</p>
+      <img id="preview-image" src="" alt="Hasil Upload" class="max-w-xs rounded shadow border" />
+    </div>
+    
     <div class="mb-4">
       <p class="text-sm md:text-base font-medium">Risiko :
-        <span class="text-green-600 font-semibold" id="hasil-risiko">-</span>
+        <span class="font-semibold" id="hasil-risiko">-</span>
       </p>
       <p class="text-sm md:text-base font-medium">Status :
-        <span class="text-green-600 font-semibold" id="hasil-status">-</span>
+        <span class="font-semibold" id="hasil-status">-</span>
       </p>
       <p class="text-sm md:text-base font-medium">Saran :
-        <span class="text-gray-600" id="hasil-saran">-</span>
+        <span class="text-gray-600" id="hasil-saran" style="white-space: pre-wrap;">-</span>
       </p>
     </div>
 
     <div class="mb-4">
       <p class="text-sm md:text-base font-semibold mb-2">Deskripsi</p>
-      <p class="text-sm leading-relaxed text-justify">
-        Hasil ini adalah prediksi dari model Machine Learning yang mendeteksi kemungkinan jenis penyakit kulit berdasarkan gambar yang Anda unggah. 
-        Pastikan untuk selalu memverifikasi hasil ini dengan profesional medis.
+      <p id="hasil-deskripsi" class="text-sm leading-relaxed text-justify">
       </p>
     </div>
 
@@ -51,56 +49,75 @@
 
   <div id="footer" class="mt-auto"></div>
 
-  <script type="module" defer src="/src/main.js"></script>
-</body>
-
-    <script>
-        // Get all the elements we need to update
-        const namaEl = document.getElementById('hasil-nama');
-        const risikoEl = document.getElementById('hasil-risiko');
-        const statusEl = document.getElementById('hasil-status');
-        const saranEl = document.getElementById('hasil-saran');
-        const previewEl = document.getElementById('preview-image');
-        const checkAgainBtn = document.getElementById('check-again');
-        
-        // Retrieve the data from localStorage
-        const result = JSON.parse(localStorage.getItem('predictionResult') || '{}');
-        const savedImage = localStorage.getItem('uploadedImage');
-
-        // Populate the page with the data
-        namaEl.textContent = result.name || 'Tidak diketahui';
-        risikoEl.textContent = result.risk || 'Tidak diketahui';
-        statusEl.textContent = result.status || 'Tidak diketahui';
-        saranEl.textContent = result.saran || 'Tidak ada saran yang tersedia.';
-
-        // --- Logic Improvements ---
-
-        // 1. Dynamically set text color for risk and status
-        // First, remove any default color classes
-        risikoEl.classList.remove('text-green-600', 'text-red-600');
-        statusEl.classList.remove('text-green-600', 'text-red-600');
-
-        if (result.status === 'Berbahaya') {
-            statusEl.classList.add('text-red-600');
-        } else {
-            statusEl.classList.add('text-green-600');
-        }
-
-        if (result.risk === 'Kanker') {
-            risikoEl.classList.add('text-red-600');
-        } else {
-            risikoEl.classList.add('text-green-600');
-        }
-
-        // 2. Display the uploaded image
-        if (savedImage) {
-          previewEl.src = savedImage;
-        }
-
-        // 3. Add event listener for the "Check Again" button
-        checkAgainBtn?.addEventListener('click', () => {
-          window.location.href = '/skin-check.html'; // Or your main page URL
-        });
-    </script>
   </body>
+
+  <script>
+    // Function to load navbar/footer for a consistent UI
+    async function loadComponent(id, path) {
+      const slot = document.getElementById(id);
+      if (!slot) return;
+      try {
+        const res = await fetch(path);
+        const html = await res.text();
+        slot.innerHTML = html;
+      } catch(e) { console.error("Failed to load component", e); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadComponent('navbar', '/component/navbar.html');
+      loadComponent('footer', '/component/footer.html');
+
+      // Get all the elements we need to update
+      const namaEl = document.getElementById('hasil-nama');
+      const risikoEl = document.getElementById('hasil-risiko');
+      const statusEl = document.getElementById('hasil-status');
+      const saranEl = document.getElementById('hasil-saran');
+      const previewEl = document.getElementById('preview-image');
+      const checkAgainBtn = document.getElementById('check-again');
+      const deskripsiEl = document.getElementById('hasil-deskripsi');
+      
+      // Retrieve the data from localStorage
+      const result = JSON.parse(localStorage.getItem('predictionResult') || '{}');
+      const savedImage = localStorage.getItem('uploadedImage');
+
+      // Populate the page with the data
+      namaEl.textContent = result.name || 'Tidak diketahui';
+      risikoEl.textContent = result.risk || 'Tidak diketahui';
+      statusEl.textContent = result.status || 'Tidak diketahui';
+      saranEl.textContent = result.saran || 'Saran tidak tersedia.';
+
+      // If result.deskripsi is empty, it will show default text.
+      if (result.deskripsi) {
+        deskripsiEl.textContent = result.deskripsi;
+        deskripsiEl.style.whiteSpace = 'pre-wrap'; // Ensure formatting is respected
+      }
+
+      // 1. Dynamically set text color for risk and status
+      risikoEl.classList.remove('text-green-600', 'text-red-600');
+      statusEl.classList.remove('text-green-600', 'text-red-600');
+
+      if (result.status === 'Berbahaya') {
+          statusEl.classList.add('text-red-600');
+      } else {
+          statusEl.classList.add('text-green-600');
+      }
+
+      if (result.risk === 'Kanker') {
+          risikoEl.classList.add('text-red-600');
+      } else {
+          risikoEl.classList.add('text-green-600');
+      }
+
+      // 2. Display the uploaded image
+      if (savedImage) {
+        previewEl.src = savedImage;
+      }
+
+      // 3. Add event listener for the "Check Again" button
+      checkAgainBtn?.addEventListener('click', () => {
+        window.location.href = '/skin-check.html';
+      });
+    });
+  </script>
+</body>
 </html>
