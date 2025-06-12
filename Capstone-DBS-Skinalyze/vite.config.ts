@@ -19,7 +19,7 @@ export default defineConfig({
         faq: resolve(__dirname, 'faq.html'),
         hasil: resolve(__dirname, 'hasil.html'),
         login: resolve(__dirname, 'loginPage.html'),
-        register: resolve(__dirname, 'register.html'),
+        register: resolve(__dirname, 'sign-up.html'),
         profile: resolve(__dirname, 'profile.html'),
         about: resolve(__dirname, 'about.html'),
       }
