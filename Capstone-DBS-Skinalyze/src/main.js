@@ -10,6 +10,7 @@ import {
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import CONFIG from "./config";
 import { image } from "@tensorflow/tfjs";
+import imageCompression from "browser-image-compression";
 
 const firebaseConfig = {
   apiKey: CONFIG.API_KEY,
@@ -29,80 +30,79 @@ async function loadComponent(id, path) {
   const html = await res.text();
   slot.innerHTML = html;
 
-  if (id === 'navbar') {
+  if (id === "navbar") {
     setupNavbarToggle();
   }
-  
-    if (id === 'UVCheck') {
+
+  if (id === "UVCheck") {
     loadUVCheckScript();
   }
 }
 
 function setupNavbarToggle() {
-  const toggleBtn = document.getElementById('menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
+  const toggleBtn = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
 
   if (toggleBtn && mobileMenu) {
-    toggleBtn.addEventListener('click', () => {
-      const isHidden = mobileMenu.classList.contains('hidden');
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = mobileMenu.classList.contains("hidden");
 
       if (isHidden) {
-        mobileMenu.classList.remove('hidden');
+        mobileMenu.classList.remove("hidden");
         void mobileMenu.offsetWidth;
-        mobileMenu.classList.remove('-translate-y-5', 'opacity-0');
-        mobileMenu.classList.add('translate-y-0', 'opacity-100');
+        mobileMenu.classList.remove("-translate-y-5", "opacity-0");
+        mobileMenu.classList.add("translate-y-0", "opacity-100");
 
-        toggleBtn.classList.add('rotate-90');
-        toggleBtn.innerText = '✕'; // ubah ke silang
+        toggleBtn.classList.add("rotate-90");
+        toggleBtn.innerText = "✕"; // ubah ke silang
       } else {
-        mobileMenu.classList.remove('translate-y-0', 'opacity-100');
-        mobileMenu.classList.add('-translate-y-5', 'opacity-0');
+        mobileMenu.classList.remove("translate-y-0", "opacity-100");
+        mobileMenu.classList.add("-translate-y-5", "opacity-0");
 
-        toggleBtn.classList.remove('rotate-90');
-        toggleBtn.innerText = '☰'; // ubah balik ke hamburger
+        toggleBtn.classList.remove("rotate-90");
+        toggleBtn.innerText = "☰"; // ubah balik ke hamburger
 
         setTimeout(() => {
-          mobileMenu.classList.add('hidden');
+          mobileMenu.classList.add("hidden");
         }, 300);
       }
     });
   }
 }
 
-loadComponent('navbar', '/component/navbar.html');
-loadComponent('hero', '/component/hero-banner.html');
-loadComponent('tentang-kami', '/component/about-us.html');
-loadComponent('artikel', '/component/artikel.html');
-loadComponent('UVCheck', '/component/UVCheck.html');
-loadComponent('faq', '/component/faq.html');
-loadComponent('faq-full', '/component/faq-full.html');
-loadComponent('footer', '/component/footer.html');
-
+loadComponent("navbar", "/component/navbar.html");
+loadComponent("hero", "/component/hero-banner.html");
+loadComponent("tentang-kami", "/component/about-us.html");
+loadComponent("artikel", "/component/artikel.html");
+loadComponent("UVCheck", "/component/UVCheck.html");
+loadComponent("faq", "/component/faq.html");
+loadComponent("faq-full", "/component/faq-full.html");
+loadComponent("footer", "/component/footer.html");
 
 // Function untuk memuat dan menjalankan UV Check script
 function loadUVCheckScript() {
-  const script = document.createElement('script');
-  script.src = '/src/uvcheck-init.js';
+  const script = document.createElement("script");
+  script.src = "/src/uvcheck-init.js";
   script.onload = () => {
     // Tunggu sebentar untuk memastikan elemen sudah dimuat
     setTimeout(() => {
-      if (typeof window.initUVCheck === 'function') {
+      if (typeof window.initUVCheck === "function") {
         window.initUVCheck();
       } else {
-        console.error('UV Check function not loaded');
+        console.error("UV Check function not loaded");
       }
     }, 100);
   };
   script.onerror = () => {
-    console.error('Failed to load UV Check script');
+    console.error("Failed to load UV Check script");
   };
   document.head.appendChild(script);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const uploadBtn = document.getElementById("upload-picture");
-  const fileLabel = document.querySelector('label[for="upload-picture"]');
   const fileInput = document.getElementById("upload-input");
+  const fileLabel = document.querySelector('label[for="upload-picture"]');
   const cameraPlaceholder = document.querySelector(".camera-placeholder");
   const checkNowBtn = document.getElementById("check-skin");
   const CheckAgainBtn = document.getElementById("check-again");
@@ -118,129 +118,147 @@ document.addEventListener("DOMContentLoaded", () => {
   const profileAddress = document.getElementById("profile-address");
   const profileAge = document.getElementById("profile-age");
   const profilePicture = document.getElementById("profile-picture");
-  const historySectionContent = document.getElementById("history-section-content");
+  const historySectionContent = document.getElementById(
+    "history-section-content"
+  );
 
-  let uploadedImage = null;
+  let uploadedImageObject = null; // Untuk menyimpan objek Image untuk predictSkinType
+  // Tidak perlu lagi menyimpan base64 mentah di variabel global jika sudah di localStorage
 
   uploadBtn?.addEventListener("click", () => {
     fileInput?.click();
   });
 
-  // Handle file input
-  fileInput?.addEventListener("change", (e) => {
+  // Handle file input - LAKUKAN KOMPRESI DI SINI
+  fileInput?.addEventListener("change", async (e) => { // Jadikan async
     const file = e.target.files[0];
-    if (!file) return;
-    fileLabel.textContent = file.name;
+    if (!file) {
+      // Bersihkan jika tidak ada file dipilih
+      fileLabel.textContent = "No Files Chosen.jpg";
+      cameraPlaceholder.innerHTML = '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
+      localStorage.removeItem("uploadedImage");
+      uploadedImageObject = null;
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const img = new Image();
-      img.src = evt.target.result;
-      img.className = "w-full h-full object-contain";
-      img.onload = () => (uploadedImage = img);
+    fileLabel.textContent = `Compressing ${file.name}...`;
+    cameraPlaceholder.innerHTML = '<p class="text-center">Mengompres gambar...</p>';
 
-      // ⬇️ Store image to localStorage
-      localStorage.setItem("uploadedImage", evt.target.result);
-
-      cameraPlaceholder.innerHTML = "";
-      cameraPlaceholder.appendChild(img);
+    const options = {
+      maxSizeMB: 0.5, // Target ukuran file setelah kompresi
+      maxWidthOrHeight: 1200, // Batas resolusi
+      useWebWorker: true,
+      // onProgress: (progress) => { console.log(`Compression progress: ${progress}%`); }
     };
-    reader.readAsDataURL(file);
+
+    try {
+      console.log(`Original file size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      const compressedFile = await imageCompression(file, options); // Kompres File object
+      console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+
+      fileLabel.textContent = compressedFile.name; // Tampilkan nama file (mungkin sama atau baru)
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const img = new Image();
+        img.src = evt.target.result; // base64 dari gambar TERKOMPRESI
+        img.className = "w-full h-full object-contain";
+        img.onload = () => (uploadedImageObject = img); // Simpan objek Image untuk predictSkinType
+
+        // Simpan base64 dari gambar TERKOMPRESI ke localStorage
+        localStorage.setItem("uploadedImage", evt.target.result);
+
+        cameraPlaceholder.innerHTML = "";
+        cameraPlaceholder.appendChild(img);
+      };
+      reader.readAsDataURL(compressedFile); // Baca File object yang sudah dikompres
+
+    } catch (error) {
+      console.error("Image compression failed:", error);
+      alert("Gagal mengompres gambar. Silakan coba lagi.");
+      fileLabel.textContent = "No Files Chosen.jpg";
+      cameraPlaceholder.innerHTML = '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
+      localStorage.removeItem("uploadedImage");
+      uploadedImageObject = null;
+    }
   });
 
   // Handle "Check Now" button
   checkNowBtn?.addEventListener("click", async () => {
-    if (!uploadedImage) {
-      alert("Please upload an image first.");
+    const compressedBase64Image = localStorage.getItem("uploadedImage");
+
+    if (!uploadedImageObject || !compressedBase64Image) {
+      alert("Silakan unggah dan kompres gambar terlebih dahulu.");
       return;
     }
 
-    // Optional: Show a loading indicator to the user
     const checkNowText = checkNowBtn.textContent;
     checkNowBtn.disabled = true;
     checkNowBtn.textContent = "Menganalisis...";
 
     try {
-      const resultIndex = await predictSkinType(uploadedImage);
+      const resultIndex = await predictSkinType(uploadedImageObject);
 
       const labelMap = [
-        {
-          name: "Actinic Keratoses",
-          risk: "Bukan Kanker",
-          status: "Berbahaya",
-        },
+        { name: "Actinic Keratoses", risk: "Bukan Kanker", status: "Berbahaya" },
         { name: "Basal Cell Carcinoma", risk: "Kanker", status: "Berbahaya" },
-        {
-          name: "Benign Keratosis-like Lesions",
-          risk: "Bukan Kanker",
-          status: "Berbahaya",
-        },
-        {
-          name: "Dermatofibroma",
-          risk: "Bukan Kanker",
-          status: "Tidak Berbahaya",
-        },
+        { name: "Benign Keratosis-like Lesions", risk: "Bukan Kanker", status: "Berbahaya" },
+        { name: "Dermatofibroma", risk: "Bukan Kanker", status: "Tidak Berbahaya" },
         { name: "Melanoma", risk: "Kanker", status: "Berbahaya" },
-        {
-          name: "Melanocytic Nevi",
-          risk: "Bukan Kanker",
-          status: "Tidak Berbahaya",
-        },
-        {
-          name: "Vascular Lesions",
-          risk: "Bukan Kanker",
-          status: "Tidak Berbahaya",
-        },
+        { name: "Melanocytic Nevi", risk: "Bukan Kanker", status: "Tidak Berbahaya" },
+        { name: "Vascular Lesions", risk: "Bukan Kanker", status: "Tidak Berbahaya" },
       ];
 
-      // 1. Get the initial result from your labelMap
       const result = labelMap[resultIndex];
 
-      const saveResultToFirestore = await fetch("http://localhost:3000/save-result", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          name: result.name,
-          risk: result.risk,
-          status: result.status,
-          image: localStorage.getItem("uploadedImage"),
-        })
-    })
+      const saveResultToFirestore = await fetch(
+        "http://localhost:3000/save-result",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            name: result.name,
+            risk: result.risk,
+            status: result.status,
+            image: compressedBase64Image,
+          }),
+        }
+      );
 
-    if(!saveResultToFirestore.ok) {
-      throw new Error("Failed to save result to Firestore.");
-    }
+      if (!saveResultToFirestore.ok) {
+        const errorData = await saveResultToFirestore.json();
+        console.error("Failed to save result to Firestore:", errorData);
+        throw new Error(`Gagal menyimpan hasil ke Firestore: ${errorData.message || saveResultToFirestore.statusText}`);
+      }
+      console.log("Result saved to Firestore successfully.");
 
-      // 2. Call your backend to get Groq advice
-      const groqResponse = await fetch("http://localhost:3000/get-groq-advice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ disease: result.name }), // Send the disease name
-      });
+
+      const groqResponse = await fetch(
+        "http://localhost:3000/get-groq-advice",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ disease: result.name }),
+        }
+      );
 
       if (!groqResponse.ok) {
-        throw new Error("Failed to get advice from server.");
+        throw new Error("Gagal mendapatkan saran dari server.");
       }
 
       const groqData = await groqResponse.json();
+      result.saran = groqData.advice;
 
-      // 3. Add the new dynamic advice to your result object
-      result.saran = groqData.advice; // This replaces the static 'saran'
-
-      // 4. Save the COMPLETE result (with Groq advice) to localStorage
       localStorage.setItem("predictionResult", JSON.stringify(result));
-
-      // 5. Redirect to the result page
       window.location.href = "/hasil.html";
+
     } catch (error) {
-      console.error("Prediction or advice generation failed:", error);
-      alert("Terjadi kesalahan saat memproses gambar atau mendapatkan saran.");
-      // Reset button state on error
+      console.error("Prediction, saving, or advice generation failed:", error);
+      alert(`Terjadi kesalahan: ${error.message}`);
+    } finally {
       checkNowBtn.disabled = false;
       checkNowBtn.textContent = checkNowText;
     }
@@ -258,94 +276,94 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-  
-    const logoutBtn = document.getElementById("logout");
-    logoutBtn?.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        alert("Berhasil logout");
-        window.location.reload();
+
+  const logoutBtn = document.getElementById("logout");
+  logoutBtn?.addEventListener("click", () => {
+    signOut(auth).then(() => {
+      alert("Berhasil logout");
+      window.location.reload();
+    });
+  });
+
+  signUpBtn?.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // Validasi field
+    if (!email || !password || !confirmPassword || !firstName || !lastName) {
+      alert("Lengkapi semua data terlebih dahulu!");
+      return;
+    }
+
+    const emailValue = email.value;
+    const passwordValue = password.value;
+    const confirmPasswordValue = confirmPassword.value;
+
+    if (passwordValue !== confirmPasswordValue) {
+      alert("Password tidak cocok");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          password: password.value,
+        }),
       });
-    });
 
-    signUpBtn?.addEventListener("click", async (e) => {
-      e.preventDefault();
+      if (!response.ok) throw new Error("Gagal menyimpan data ke server");
 
-      // Validasi field
-      if (!email || !password || !confirmPassword || !firstName || !lastName) {
-        alert("Lengkapi semua data terlebih dahulu!");
-        return;
-      }
+      alert("Akun berhasil dibuat!");
+      window.location.href = "/index.html";
+    } catch (error) {
+      console.error("Error signing up:", error);
+      alert(error.message);
+    }
+  });
 
-      const emailValue = email.value;
-      const passwordValue = password.value;
-      const confirmPasswordValue = confirmPassword.value;
+  loginForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      if (passwordValue !== confirmPasswordValue) {
-        alert("Password tidak cocok");
-        return;
-      }
+    const loginButton = document.getElementById("login-button");
+    loginButton.disabled = true;
+    loginButton.textContent = "Memproses...";
 
-      try {
-        const response = await fetch("http://localhost:3000/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName: firstName.value,
-            lastName: lastName.value,
-            email: email.value,
-            password: password.value,
-          }),
-        });
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-        if (!response.ok) throw new Error("Gagal menyimpan data ke server");
+    if (!email || !password) {
+      alert("Mohon isi semua field.");
+      return;
+    }
 
-        alert("Akun berhasil dibuat!");
+    try {
+      const auth = getAuth(app);
+      await signInWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      if (user) {
+        const idToken = await getIdToken(user);
+        sessionStorage.setItem("token", idToken);
         window.location.href = "/index.html";
-      } catch (error) {
-        console.error("Error signing up:", error);
-        alert(error.message);
+      } else {
+        alert("Login gagal. Periksa kembali email dan password.");
       }
-    });
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat login.");
+    }
 
-    loginForm?.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    loginButton.disabled = false;
+    loginButton.textContent = "Login";
+  });
 
-      const loginButton = document.getElementById("login-button");
-      loginButton.disabled = true;
-      loginButton.textContent = "Memproses...";
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!email || !password) {
-        alert("Mohon isi semua field.");
-        return;
-      }
-
-      try {
-        const auth = getAuth(app);
-        await signInWithEmailAndPassword(auth, email, password);
-        const user = auth.currentUser;
-        if (user) {
-          const idToken = await getIdToken(user);
-          sessionStorage.setItem("token", idToken);
-          window.location.href = "/index.html";
-        } else {
-          alert("Login gagal. Periksa kembali email dan password.");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Terjadi kesalahan saat login.");
-      }
-
-      loginButton.disabled = false;
-      loginButton.textContent = "Login";
-    });
-
-    if (window.location.pathname.includes("/profile.html")) {
-      const token = sessionStorage.getItem("token");
+  if (window.location.pathname.includes("/profile.html")) {
+    const token = sessionStorage.getItem("token");
 
     if (!token) {
       alert("Anda harus login untuk melihat halaman profil.");
@@ -358,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch("http://localhost:3000/get-profile", {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -368,21 +386,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) {
-            alert("Sesi Anda tidak valid atau telah berakhir. Silakan login kembali.");
+            alert(
+              "Sesi Anda tidak valid atau telah berakhir. Silakan login kembali."
+            );
             sessionStorage.removeItem("token");
             window.location.href = "/login.html";
           }
-          throw new Error(`Gagal mengambil data profil: ${response.statusText}`);
+          throw new Error(
+            `Gagal mengambil data profil: ${response.statusText}`
+          );
         }
 
-        if (profileName) profileName.textContent = `${profileData.firstName} ${profileData.lastName}`;
-        if (profileGender) profileGender.textContent = profileData.gender || "-";
-        if (profileAddress) profileAddress.textContent = profileData.address || "-";
+        if (profileName)
+          profileName.textContent = `${profileData.firstName} ${profileData.lastName}`;
+        if (profileGender)
+          profileGender.textContent = profileData.gender || "-";
+        if (profileAddress)
+          profileAddress.textContent = profileData.address || "-";
         if (profileAge) profileAge.textContent = profileData.age || "-";
         if (profilePicture && profileData.profilePictureUrl) {
           profilePicture.src = profileData.profilePictureUrl;
         }
-
       } catch (error) {
         console.error("Error fetching profile data:", error);
         if (profileName) profileName.textContent = "Gagal memuat data profil.";
@@ -391,19 +415,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchAndDisplayHistoryData() {
       if (!historySectionContent) return;
-      historySectionContent.innerHTML = '<p class="text-center">Memuat riwayat...</p>';
+      historySectionContent.innerHTML =
+        '<p class="text-center">Memuat riwayat...</p>';
 
       try {
         const response = await fetch(`http://localhost:3000/get-result`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
-          throw new Error(`Gagal mengambil riwayat pemeriksaan: ${response.statusText}`);
+          throw new Error(
+            `Gagal mengambil riwayat pemeriksaan: ${response.statusText}`
+          );
         }
 
         const historyList = await response.json();
@@ -411,74 +438,99 @@ document.addEventListener("DOMContentLoaded", () => {
         historySectionContent.innerHTML = "";
 
         if (result.length === 0) {
-          historySectionContent.innerHTML = '<p class="text-center text-gray-500">Belum ada riwayat pemeriksaan.</p>';
+          historySectionContent.innerHTML =
+            '<p class="text-center text-gray-500">Belum ada riwayat pemeriksaan.</p>';
           return;
         }
 
-        result.forEach(item => {
-          const date = new Date(item.createdAt._seconds * 1000 + item.createdAt._nanoseconds / 1000000);
-          const formattedDate = `${date.getDate()} ${date.toLocaleString('id-ID', { month: 'long' })} ${date.getFullYear()}`;
-          const riskColor = item.risk === "Kanker" ? "text-red-600" : "text-green-600";
+        result.forEach((item) => {
+          const date = new Date(
+            item.createdAt._seconds * 1000 +
+              item.createdAt._nanoseconds / 1000000
+          );
+          const formattedDate = `${date.getDate()} ${date.toLocaleString(
+            "id-ID",
+            { month: "long" }
+          )} ${date.getFullYear()}`;
+          const riskColor =
+            item.risk === "Kanker" ? "text-red-600" : "text-green-600";
 
           const historyCardHtml = `
             <div class="bg-white rounded-lg shadow-md p-[40px] flex justify-between items-start gap-6 mb-6">
                 <div>
-                    <p class="text-xl font-semibold mb-2">Hasil: ${item.name || 'Tidak Diketahui'}</p>
+                    <p class="text-xl font-semibold mb-2">Hasil: ${
+                      item.name || "Tidak Diketahui"
+                    }</p>
                     <div class="flex items-center text-gray-600 gap-2 mb-1">
                         <span>📅</span> <span>${formattedDate}</span>
                     </div>
                     <p class="text-gray-700">
-                        Risiko: <span class="${riskColor} font-bold">${item.risk}</span>
+                        Risiko: <span class="${riskColor} font-bold">${
+            item.risk
+          }</span>
                     </p>
                      <p class="text-gray-700">
-                        Status: <span class="font-bold">${item.status || '-'}</span>
+                        Status: <span class="font-bold">${
+                          item.status || "-"
+                        }</span>
                     </p>
                 </div>
                 <div class="text-right self-end">
-                    <button data-result='${JSON.stringify(item)}' class="view-detail-btn text-sm text-blue-600 hover:underline flex items-center gap-1">
+                    <button data-result='${JSON.stringify(
+                      item
+                    )}' class="view-detail-btn text-sm text-blue-600 hover:underline flex items-center gap-1">
                         Lihat Detail <span>↗</span>
                     </button>
                 </div>
             </div>
           `;
-          historySectionContent.insertAdjacentHTML('beforeend', historyCardHtml);
+          historySectionContent.insertAdjacentHTML(
+            "beforeend",
+            historyCardHtml
+          );
         });
-        
-        document.querySelectorAll('.view-detail-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-              const resultDataString = e.currentTarget.getAttribute('data-result');
-              try {
-                const resultData = JSON.parse(resultDataString);
-                localStorage.setItem('predictionResult', JSON.stringify({
+
+        document.querySelectorAll(".view-detail-btn").forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const resultDataString =
+              e.currentTarget.getAttribute("data-result");
+            try {
+              const resultData = JSON.parse(resultDataString);
+              localStorage.setItem(
+                "predictionResult",
+                JSON.stringify({
                   name: resultData.name,
                   risk: resultData.risk,
                   status: resultData.status,
-                  saran: resultData.saran || "Saran tidak tersedia untuk riwayat ini.",
-                }));
-                if (resultData.image) {
-                    localStorage.setItem('uploadedImage', resultData.image);
-                } else {
-                    localStorage.removeItem('uploadedImage');
-                }
-                window.location.href = '/hasil.html';
-              } catch (parseError) {
-                  console.error("Gagal memparsing data hasil:", parseError);
-                  alert("Tidak dapat menampilkan detail hasil.");
+                  saran:
+                    resultData.saran ||
+                    "Saran tidak tersedia untuk riwayat ini.",
+                })
+              );
+              if (resultData.image) {
+                localStorage.setItem("uploadedImage", resultData.image);
+              } else {
+                localStorage.removeItem("uploadedImage");
               }
-            });
+              window.location.href = "/hasil.html";
+            } catch (parseError) {
+              console.error("Gagal memparsing data hasil:", parseError);
+              alert("Tidak dapat menampilkan detail hasil.");
+            }
           });
-
+        });
       } catch (error) {
         console.error("Error fetching history data:", error);
-        historySectionContent.innerHTML = '<p class="text-center text-red-500">Gagal memuat riwayat pemeriksaan.</p>';
+        historySectionContent.innerHTML =
+          '<p class="text-center text-red-500">Gagal memuat riwayat pemeriksaan.</p>';
       }
     }
 
     fetchAndDisplayProfileData();
     fetchAndDisplayHistoryData();
 
-    filterSelectEl?.addEventListener('change', (e) => {
-        fetchAndDisplayHistoryData(e.target.value);
+    filterSelectEl?.addEventListener("change", (e) => {
+      fetchAndDisplayHistoryData(e.target.value);
     });
   }
 });
