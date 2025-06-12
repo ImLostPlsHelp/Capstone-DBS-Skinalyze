@@ -69,8 +69,8 @@ function updateNavbarBasedOnLoginStatus() {
     }
     if (logoutButton) {
       logoutButton.style.display = "inline";
-      logoutButton.removeEventListener('click', handleLogout);
-      logoutButton.addEventListener('click', handleLogout);
+      logoutButton.removeEventListener("click", handleLogout);
+      logoutButton.addEventListener("click", handleLogout);
     }
   } else {
     if (loginLink) loginLink.style.display = "inline";
@@ -122,26 +122,26 @@ loadComponent("footer", "/component/footer.html");
 
 function initUVCheck() {
   const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-  
-  const statusEl = document.getElementById('status');
-  const uvInfoEl = document.getElementById('uv-info');
-  const uvValueEl = document.getElementById('uv-value');
-  const uvRecommendationEl = document.getElementById('uv-recommendation');
+
+  const statusEl = document.getElementById("status");
+  const uvInfoEl = document.getElementById("uv-info");
+  const uvValueEl = document.getElementById("uv-value");
+  const uvRecommendationEl = document.getElementById("uv-recommendation");
 
   if (!statusEl) {
-    console.error('UV Check: Status element not found');
+    console.error("UV Check: Status element not found");
     return;
   }
 
   if (navigator.geolocation) {
-    statusEl.textContent = 'Meminta izin lokasi...';
+    statusEl.textContent = "Meminta izin lokasi...";
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
   } else {
-    statusEl.textContent = 'Geolocation tidak didukung oleh browser Anda.';
+    statusEl.textContent = "Geolocation tidak didukung oleh browser Anda.";
   }
 
   async function onSuccess(position) {
-    statusEl.textContent = 'Lokasi ditemukan, mengambil data Indeks UV...';
+    statusEl.textContent = "Lokasi ditemukan, mengambil data Indeks UV...";
 
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
@@ -151,7 +151,7 @@ function initUVCheck() {
       const response = await fetch(apiUrl);
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error('API Key tidak valid atau langganan belum aktif.');
+          throw new Error("API Key tidak valid atau langganan belum aktif.");
         }
         throw new Error(`Terjadi error dari server: ${response.status}`);
       }
@@ -160,7 +160,7 @@ function initUVCheck() {
     } catch (error) {
       statusEl.textContent = `Gagal mengambil data: ${error.message}`;
       if (uvInfoEl) {
-        uvInfoEl.classList.add('hidden');
+        uvInfoEl.classList.add("hidden");
       }
     }
   }
@@ -169,16 +169,17 @@ function initUVCheck() {
     let message;
     switch (error.code) {
       case error.PERMISSION_DENIED:
-        message = 'Anda menolak permintaan untuk mengakses lokasi.';
+        message = "Anda menolak permintaan untuk mengakses lokasi.";
         break;
       case error.POSITION_UNAVAILABLE:
-        message = 'Informasi lokasi tidak tersedia saat ini.';
+        message = "Informasi lokasi tidak tersedia saat ini.";
         break;
       case error.TIMEOUT:
-        message = 'Waktu permintaan untuk mendapatkan lokasi habis.';
+        message = "Waktu permintaan untuk mendapatkan lokasi habis.";
         break;
       default:
-        message = 'Terjadi kesalahan yang tidak diketahui saat mengambil lokasi.';
+        message =
+          "Terjadi kesalahan yang tidak diketahui saat mengambil lokasi.";
         break;
     }
     statusEl.textContent = message;
@@ -186,38 +187,43 @@ function initUVCheck() {
 
   function displayUvData(uvi) {
     const uvIndex = Math.round(uvi);
-    
+
     if (!uvValueEl || !uvRecommendationEl || !uvInfoEl) {
-      console.error('UV Check: Required elements not found');
+      console.error("UV Check: Required elements not found");
       return;
     }
 
     uvValueEl.textContent = uvIndex;
 
-    let recommendation = '';
-    let levelClass = '';
+    let recommendation = "";
+    let levelClass = "";
 
     if (uvIndex <= 2) {
-      recommendation = 'Risiko rendah. Perlindungan dari matahari biasanya tidak diperlukan.';
-      levelClass = 'bg-green-500';
+      recommendation =
+        "Risiko rendah. Perlindungan dari matahari biasanya tidak diperlukan.";
+      levelClass = "bg-green-500";
     } else if (uvIndex <= 5) {
-      recommendation = 'Risiko sedang. Gunakan tabir surya dan hindari paparan langsung di siang hari.';
-      levelClass = 'bg-yellow-400';
+      recommendation =
+        "Risiko sedang. Gunakan tabir surya dan hindari paparan langsung di siang hari.";
+      levelClass = "bg-yellow-400";
     } else if (uvIndex <= 7) {
-      recommendation = 'Risiko tinggi. Gunakan tabir surya, topi, dan kacamata hitam.';
-      levelClass = 'bg-orange-500';
+      recommendation =
+        "Risiko tinggi. Gunakan tabir surya, topi, dan kacamata hitam.";
+      levelClass = "bg-orange-500";
     } else if (uvIndex <= 10) {
-      recommendation = 'Risiko sangat tinggi. Hindari aktivitas di luar ruangan pada siang hari.';
-      levelClass = 'bg-red-600';
+      recommendation =
+        "Risiko sangat tinggi. Hindari aktivitas di luar ruangan pada siang hari.";
+      levelClass = "bg-red-600";
     } else {
-      recommendation = 'Risiko ekstrem. Jangan beraktivitas di luar ruangan tanpa perlindungan lengkap.';
-      levelClass = 'bg-purple-700';
+      recommendation =
+        "Risiko ekstrem. Jangan beraktivitas di luar ruangan tanpa perlindungan lengkap.";
+      levelClass = "bg-purple-700";
     }
 
     uvValueEl.className = `text-6xl font-bold rounded-lg py-2 px-4 inline-block text-white transition-colors duration-300 ${levelClass}`;
     uvRecommendationEl.textContent = recommendation;
-    statusEl.textContent = '';
-    uvInfoEl.classList.remove('hidden');
+    statusEl.textContent = "";
+    uvInfoEl.classList.remove("hidden");
   }
 }
 
@@ -243,6 +249,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const historySectionContent = document.getElementById(
     "history-section-content"
   );
+  const backToHomeBtn = document.getElementById("back-to-home");
+
+  backToHomeBtn?.addEventListener("click", () => {
+    window.location.href = "/index.html";
+  });
 
   let uploadedImageObject = null;
 
@@ -254,14 +265,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const file = e.target.files[0];
     if (!file) {
       fileLabel.textContent = "No Files Chosen.jpg";
-      cameraPlaceholder.innerHTML = '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
+      cameraPlaceholder.innerHTML =
+        '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
       localStorage.removeItem("uploadedImage");
       uploadedImageObject = null;
       return;
     }
 
     fileLabel.textContent = `Compressing ${file.name}...`;
-    cameraPlaceholder.innerHTML = '<p class="text-center">Mengompres gambar...</p>';
+    cameraPlaceholder.innerHTML =
+      '<p class="text-center">Mengompres gambar...</p>';
 
     const options = {
       maxSizeMB: 0.5,
@@ -270,9 +283,15 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      console.log(`Original file size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      console.log(
+        `Original file size: ${(file.size / 1024 / 1024).toFixed(2)} MB`
+      );
       const compressedFile = await imageCompression(file, options); // Kompres File object
-      console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+      console.log(
+        `Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(
+          2
+        )} MB`
+      );
 
       fileLabel.textContent = compressedFile.name;
 
@@ -289,12 +308,12 @@ document.addEventListener("DOMContentLoaded", () => {
         cameraPlaceholder.appendChild(img);
       };
       reader.readAsDataURL(compressedFile);
-
     } catch (error) {
       console.error("Image compression failed:", error);
       alert("Gagal mengompres gambar. Silakan coba lagi.");
       fileLabel.textContent = "No Files Chosen.jpg";
-      cameraPlaceholder.innerHTML = '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
+      cameraPlaceholder.innerHTML =
+        '<img src="/assets/photo.png" alt="Take a photo" class="w-1/2 h-1/2 object-contain" />';
       localStorage.removeItem("uploadedImage");
       uploadedImageObject = null;
     }
@@ -316,18 +335,37 @@ document.addEventListener("DOMContentLoaded", () => {
       const resultIndex = await predictSkinType(uploadedImageObject);
 
       const labelMap = [
-        { name: "Actinic Keratoses", risk: "Bukan Kanker", status: "Berbahaya" },
+        {
+          name: "Actinic Keratoses",
+          risk: "Bukan Kanker",
+          status: "Berbahaya",
+        },
         { name: "Basal Cell Carcinoma", risk: "Kanker", status: "Berbahaya" },
-        { name: "Benign Keratosis-like Lesions", risk: "Bukan Kanker", status: "Berbahaya" },
-        { name: "Dermatofibroma", risk: "Bukan Kanker", status: "Tidak Berbahaya" },
+        {
+          name: "Benign Keratosis-like Lesions",
+          risk: "Bukan Kanker",
+          status: "Berbahaya",
+        },
+        {
+          name: "Dermatofibroma",
+          risk: "Bukan Kanker",
+          status: "Tidak Berbahaya",
+        },
         { name: "Melanoma", risk: "Kanker", status: "Berbahaya" },
-        { name: "Melanocytic Nevi", risk: "Bukan Kanker", status: "Tidak Berbahaya" },
-        { name: "Vascular Lesions", risk: "Bukan Kanker", status: "Tidak Berbahaya" },
+        {
+          name: "Melanocytic Nevi",
+          risk: "Bukan Kanker",
+          status: "Tidak Berbahaya",
+        },
+        {
+          name: "Vascular Lesions",
+          risk: "Bukan Kanker",
+          status: "Tidak Berbahaya",
+        },
       ];
 
       const result = labelMap[resultIndex];
 
-    
       const groqResponse = await fetch(
         "https://back-end-skinalyze.onrender.com/api/get-groq-advice",
         {
@@ -342,11 +380,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const groqData = await groqResponse.json();
-      const fullContent = groqData.advice; 
+      const fullContent = groqData.advice;
 
-      const separator = '---PEMISAH---';
-      let descriptionText = 'Deskripsi tidak tersedia.';
-      let adviceText = fullContent; 
+      const separator = "---PEMISAH---";
+      let descriptionText = "Deskripsi tidak tersedia.";
+      let adviceText = fullContent;
 
       if (fullContent.includes(separator)) {
         const parts = fullContent.split(separator);
@@ -379,13 +417,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!saveResultToFirestore.ok) {
         const errorData = await saveResultToFirestore.json();
         console.error("Failed to save result to Firestore:", errorData);
-        throw new Error(`Gagal menyimpan hasil ke Firestore: ${errorData.message || saveResultToFirestore.statusText}`);
+        throw new Error(
+          `Gagal menyimpan hasil ke Firestore: ${
+            errorData.message || saveResultToFirestore.statusText
+          }`
+        );
       }
       console.log("Result saved to Firestore successfully.");
 
       localStorage.setItem("predictionResult", JSON.stringify(result));
       window.location.href = "/hasil.html";
-
     } catch (error) {
       console.error("Prediction, saving, or advice generation failed:", error);
       alert(`Terjadi kesalahan: ${error.message}`);
@@ -433,18 +474,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("https://back-end-skinalyze.onrender.com/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: firstName.value,
-          lastName: lastName.value,
-          email: email.value,
-          password: password.value,
-        }),
-      });
+      const response = await fetch(
+        "https://back-end-skinalyze.onrender.com/api/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+            password: password.value,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error("Gagal menyimpan data ke server");
 
@@ -456,66 +500,69 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-loginForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  loginForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const loginButton = document.getElementById("login-button");
-  loginButton.disabled = true;
-  loginButton.textContent = "Memproses...";
+    const loginButton = document.getElementById("login-button");
+    loginButton.disabled = true;
+    loginButton.textContent = "Memproses...";
 
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-  if (!email || !password) {
-    alert("Mohon isi semua field.");
-    loginButton.disabled = false;
-    loginButton.textContent = "Login";
-    return;
-  }
-
-  try {
-    const response = await fetch("https://back-end-skinalyze.onrender.com/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      if (data.user && data.user.token) {
-        sessionStorage.setItem("token", data.user.token);
-        if (data.user.firstName) {
-          sessionStorage.setItem("firstName", data.user.firstName);
-        }
-        if (data.user.lastName) {
-          sessionStorage.setItem("lastName", data.user.lastName);
-        }
-        if (data.user.uid) {
-            sessionStorage.setItem("uid", data.user.uid);
-        }
-
-        alert(data.message || "Login berhasil!");
-        window.location.href = "/index.html";
-      } else {
-        alert(data.error || "Login gagal. Data pengguna tidak lengkap.");
-      }
-    } else {
-      alert(data.error || `Login gagal (Status: ${response.status})`);
+    if (!email || !password) {
+      alert("Mohon isi semua field.");
+      loginButton.disabled = false;
+      loginButton.textContent = "Login";
+      return;
     }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Terjadi kesalahan saat mencoba login. Periksa koneksi Anda.");
-  } finally {
-    loginButton.disabled = false;
-    loginButton.textContent = "Login";
-  }
-});
+
+    try {
+      const response = await fetch(
+        "https://back-end-skinalyze.onrender.com/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (data.user && data.user.token) {
+          sessionStorage.setItem("token", data.user.token);
+          if (data.user.firstName) {
+            sessionStorage.setItem("firstName", data.user.firstName);
+          }
+          if (data.user.lastName) {
+            sessionStorage.setItem("lastName", data.user.lastName);
+          }
+          if (data.user.uid) {
+            sessionStorage.setItem("uid", data.user.uid);
+          }
+
+          alert(data.message || "Login berhasil!");
+          window.location.href = "/index.html";
+        } else {
+          alert(data.error || "Login gagal. Data pengguna tidak lengkap.");
+        }
+      } else {
+        alert(data.error || `Login gagal (Status: ${response.status})`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat mencoba login. Periksa koneksi Anda.");
+    } finally {
+      loginButton.disabled = false;
+      loginButton.textContent = "Login";
+    }
+  });
 
   if (window.location.pathname.includes("/profile.html")) {
     const token = sessionStorage.getItem("token");
@@ -528,13 +575,16 @@ loginForm?.addEventListener("submit", async (e) => {
 
     async function fetchAndDisplayProfileData() {
       try {
-        const response = await fetch("https://back-end-skinalyze.onrender.com/api/get-profile", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          "https://back-end-skinalyze.onrender.com/api/get-profile",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const profile = await response.json();
         const profileData = profile.user;
@@ -574,13 +624,16 @@ loginForm?.addEventListener("submit", async (e) => {
         '<p class="text-center">Memuat riwayat...</p>';
 
       try {
-        const response = await fetch(`https://back-end-skinalyze.onrender.com/api/get-result`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `https://back-end-skinalyze.onrender.com/api/get-result`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(
