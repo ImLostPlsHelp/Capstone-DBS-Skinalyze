@@ -14,18 +14,19 @@
     </header>
 
     <!-- Profil Section -->
-    <main class="max-w-9xl mx-auto mt-10 px-4">
+    <main class="max-w-[1200px] mx-auto my-10 px-4 sm:px-6 lg:px-0 w-full">
         <!-- Profil Card -->
-        <section class="bg-white rounded-lg shadow-md relative overflow-hidden flex gap-20 p-[40px] items-center">
-            <img id="profile-picture" src="/assets/profilePicture.png" alt="Foto Profil"
-                class="w-3xs h-3xs rounded-full object-cover flex-shrink-0" />
+        <section
+            class="bg-white rounded-lg shadow-md relative overflow-hidden flex flex-col sm:flex-row gap-10 sm:gap-20 p-6 sm:p-10 items-center">
+            <img src="/assets/ppdefault.jpg" alt="Foto Profil"
+                class="w-64 h-64 rounded-full object-cover flex-shrink-0" />
 
-            <div class="flex-1">
-                <h2 id="profile-name" class="text-[64px] font-bold">-</h2>
-                <div class="text-xl font-semibold space-y-5 mt-9">
-                    <p><strong>Jenis Kelamin:</strong> <span id="profile-gender">-</span></p>
-                    <p><strong>Alamat:</strong> <span id="profile-address">-</span></p>
-                    <p><strong>Umur:</strong> <span id="profile-age">-</span></p>
+            <div class="flex-1 text-center sm:text-left">
+                <h2 class="text-3xl sm:text-[64px] font-bold">Bobby Sinaga</h2>
+                <div class="text-base sm:text-xl font-semibold space-y-5 mt-6 sm:mt-9">
+                    <p><strong>Jenis Kelamin:</strong> Laki - laki</p>
+                    <p><strong>Alamat:</strong> Gambir, Jakarta, Indonesia</p>
+                    <p><strong>Umur:</strong> 21</p>
                 </div>
             </div>
 
@@ -34,23 +35,27 @@
         </section>
 
         <!-- Riwayat Section -->
-        <section class="mt-10 space-y-6">
-            <div class="flex justify-between items-center">
+        <section class="mt-10 space-y-6 px-2 sm:px-0">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 class="text-2xl font-bold">Riwayat Pemeriksaan</h3>
-                <div class="flex items-center gap-2 text-base">
+                <div class="flex items-center gap-2 text-base w-full sm:w-auto">
                     <label for="filter">Filter:</label>
-                    <select id="filter" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none">
-                        <option value="7days">Last 7 Days</option>
-                        <option value="30days">Last 30 Days</option>
-                        <option value="all">All</option>
+                    <select id="filter"
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-teal-300 w-full sm:w-auto">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>All</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Container untuk Riwayat Card Dinamis -->
             <div id="history-section-content" class="space-y-6">
                 <!-- Kartu riwayat akan dimasukkan di sini oleh JavaScript -->
-            </div>
+           </div>
+
+
+
+
         </section>
     </main>
 

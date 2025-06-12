@@ -28,9 +28,44 @@ async function loadComponent(id, path) {
   const res = await fetch(path);
   const html = await res.text();
   slot.innerHTML = html;
+
+  if (id === 'navbar') {
+    setupNavbarToggle();
+  }
   
     if (id === 'UVCheck') {
     loadUVCheckScript();
+  }
+}
+
+function setupNavbarToggle() {
+  const toggleBtn = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (toggleBtn && mobileMenu) {
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.contains('hidden');
+
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        void mobileMenu.offsetWidth;
+        mobileMenu.classList.remove('-translate-y-5', 'opacity-0');
+        mobileMenu.classList.add('translate-y-0', 'opacity-100');
+
+        toggleBtn.classList.add('rotate-90');
+        toggleBtn.innerText = '✕'; // ubah ke silang
+      } else {
+        mobileMenu.classList.remove('translate-y-0', 'opacity-100');
+        mobileMenu.classList.add('-translate-y-5', 'opacity-0');
+
+        toggleBtn.classList.remove('rotate-90');
+        toggleBtn.innerText = '☰'; // ubah balik ke hamburger
+
+        setTimeout(() => {
+          mobileMenu.classList.add('hidden');
+        }, 300);
+      }
+    });
   }
 }
 
@@ -42,6 +77,7 @@ loadComponent('UVCheck', '/component/UVCheck.html');
 loadComponent('faq', '/component/faq.html');
 loadComponent('faq-full', '/component/faq-full.html');
 loadComponent('footer', '/component/footer.html');
+
 
 // Function untuk memuat dan menjalankan UV Check script
 function loadUVCheckScript() {
