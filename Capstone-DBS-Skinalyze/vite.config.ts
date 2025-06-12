@@ -25,15 +25,4 @@ export default defineConfig({
       }
     }
   },
-  // --- ADD THIS NEW SECTION ---
-  server: {
-    proxy: {
-      // This tells Vite to forward any request to '/get-groq-advice'
-      // to your backend server running on http://localhost:3000
-      '/get-groq-advice': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-    },
-  },
 })
