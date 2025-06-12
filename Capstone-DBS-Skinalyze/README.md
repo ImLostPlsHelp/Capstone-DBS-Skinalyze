@@ -1,12 +1,14 @@
 # Skinalyze - Deteksi Dini Kanker Kulit dengan Model Convolutional Neural Network berbasis Website Responsif.
 
-# Live Demo
+## Akses Website
+
+Website: https://capstone-dbs-skinalyze.vercel.app
 
 # Fitur
 
 - **Deteksi Kanker Kulit**: Upload gambar dan dapatkan analisis menggunakan model machine learning
 - **UV Index Checker**: Cek indeks UV real-time berdasarkan lokasi
-- **Saran AI**: Dapatkan saran kesehatan dari Groq AI
+- **Saran AI**: Dapatkan saran kesehatan dari AI
 - **Autentikasi**: Sistem login/register dengan Firebase
 - **Responsive Design**: Interface yang mobile-friendly
 
@@ -17,9 +19,8 @@
 - **Machine Learning**: TensorFlow.js
 - **Database**: Firebase Firestore
 - **Authentication**: Firebase Auth
-- **AI Integration**: Groq API
+- **AI Integration**: AI Assistant
 - **Build Tool**: Vite
-- **Weather API**: OpenWeatherMap
 
 # Prerequisites
 
@@ -31,138 +32,183 @@
 
 ## Clone Repository
 
+```bash
 git clone https://github.com/ImLostPlsHelp/Capstone-DBS-Skinalyze.git
 cd Capstone-DBS-Skinalyze
+```
 
 ## Install Dependencies
 
+```bash
 npm install
+```
 
-## Dependencies yang dibutuhkan:
+**Dependencies yang dibutuhkan:**
 
-npm install express groq-sdk dotenv firebase @tensorflow/tfjs vite
+```bash
+npm install express dotenv firebase @tensorflow/tfjs vite
+```
 
 ## Setup Environment Variables
 
 Buat file `.env` di root directory:
 
-env
-
-## Server Port
-
+```env
+# Server Port
 PORT=8000
+```
+
+## Firebase Configuration
+
+Buat file `src/config.js` dengan konfigurasi Firebase Anda sendiri.
 
 ## Model Machine Learning
 
 Pastikan model TensorFlow.js tersedia di folder `public/model/`:
 
+<pre>
 public/
 └── model/
-├── model.json
-├── weights.bin
-└── metadata.json
+    ├── model.json
+    ├── weights.bin
+    └── metadata.json
+</pre>
 
-## Running the Application
+# Running the Application
 
 ## Start Backend Server
 
+```bash
 node server.js
+```
 
 Output yang diharapkan:
+
+```
 Server running on port 8000
+```
 
 ## Start Frontend
 
+```bash
 npm run dev
+```
 
 Output yang diharapkan:
+
+```
 VITE v4.x.x ready in xxx ms
 
-➜ Local: http://localhost:5173/
-➜ Network: use --host to expose
-
-# Akses Aplikasi
-
-Buka browser dan kunjungi:
-
-- **Frontend**: http://localhost:5173/
-- **Backend API**: http://localhost:8000/
+➜  Local:   http://localhost:5173/
+➜  Network: use --host to expose
+```
 
 # Project Structure
 
+<pre>
 Capstone-DBS-Skinalyze/
-├── .env # Environment variables
-├── server.js # Backend server
-├── package.json # Dependencies
-├── vite.config.js # Vite configuration
+├── .env                    # Environment variables
+├── server.js              # Backend server
+├── package.json           # Dependencies
+├── vite.config.js         # Vite configuration
 ├── src/
-│ ├── main.js # Main JavaScript file
-│ ├── config.js # Firebase config
-│ ├── predict/
-│ │ └── predict.js # ML prediction logic
-│ └── uvcheck-init.js # UV checker initialization
+│   ├── main.js           # Main JavaScript file
+│   ├── config.js         # Firebase config
+│   ├── predict/
+│   │   └── predict.js    # ML prediction logic
+│   └── uvcheck-init.js   # UV checker initialization
 ├── public/
-│ ├── index.html # Main HTML
-│ ├── skin-check.html # Skin check page
-│ ├── hasil.html # Results page
-│ ├── component/ # Reusable components
-│ │ ├── navbar.html
-│ │ ├── hero-banner.html
-│ │ ├── UVCheck.html
-│ │ └── ...
-│ └── model/ # TensorFlow.js model files
-│ ├── model.json
-│ └── weights.bin
+│   ├── index.html        # Main HTML
+│   ├── skin-check.html   # Skin check page
+│   ├── hasil.html        # Results page
+│   ├── component/        # Reusable components
+│   │   ├── navbar.html
+│   │   ├── hero-banner.html
+│   │   ├── UVCheck.html
+│   │   └── ...
+│   └── model/           # TensorFlow.js model files
+│       ├── model.json
+│       └── weights.bin
 └── README.md
+</pre>
 
 # Available Scripts
 
+```bash
 # Start development server
-
 npm run dev
 
 # Build for production
-
 npm run build
 
 # Preview production build
-
 npm run preview
 
 # Start backend server
-
 node server.js
-
-# API Endpoints
-
-### Backend API Routes:
-
-- `POST /get-groq-advice`: Mendapatkan saran AI berdasarkan hasil deteksi
-- `POST /api/signup`: Registrasi user baru
-- `GET /health`: Health check endpoint
+```
 
 # Testing
 
-# Test Model Prediction:
+## Test Model Prediction:
 
 1. Upload gambar kulit di halaman skin check
 2. Klik "Analyze Now"
 3. Tunggu hasil analisis
 4. Lihat hasil dan saran AI
 
-# Test UV Checker:
+## Test UV Checker:
 
 1. Allow location permission
 2. Lihat indeks UV real-time
 3. Baca rekomendasi perlindungan
 
-#Deploy Backend:
+# Troubleshooting
+
+## Common Issues:
+
+**1. Firebase Import Error:**
+
+```bash
+npm install firebase
+```
+
+**2. TensorFlow.js Error:**
+
+```bash
+npm install @tensorflow/tfjs
+```
+
+**3. Server Connection Error:**
+
+```
+ECONNREFUSED
+```
+
+**Solution:** Pastikan backend server berjalan di port 8000
+
+**4. Model Loading Error:**
+
+```
+Failed to load model
+```
+
+**Solution:** Pastikan file model tersedia di `public/model/`
+
+# Deployment
+
+## Build for Production:
+
+```bash
+npm run build
+```
+
+## Deploy Backend:
 
 1. **Heroku:**
 
    ```bash
    heroku create your-app-name
-   heroku config:set GROQ_API_KEY=your_key
    git push heroku main
    ```
 
@@ -171,8 +217,49 @@ node server.js
    - Set environment variables
    - Configure API routes
 
-### Deploy Frontend:
+## Deploy Frontend:
 
 ```bash
 npm run build
+# Upload dist/ folder to hosting service
 ```
+
+# Contributing
+
+1. Fork repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open Pull Request
+
+# License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+# Contact
+
+- **Team**: Capstone DBS Skinalyze
+- **GitHub**: [Repository Link](https://github.com/ImLostPlsHelp/Capstone-DBS-Skinalyze)
+
+---
+
+# Quick Start Summary
+
+```bash
+# 1. Clone & Install
+git clone https://github.com/ImLostPlsHelp/Capstone-DBS-Skinalyze.git
+cd Capstone-DBS-Skinalyze
+npm install
+
+# 2. Setup Environment
+# Create .env file with your configuration
+
+# 3. Run Application
+node server.js          # Terminal 1
+npm run dev            # Terminal 2
+
+# 4. Open Browser
+# http://localhost:5173
+```
+
+**Happy Coding!**
