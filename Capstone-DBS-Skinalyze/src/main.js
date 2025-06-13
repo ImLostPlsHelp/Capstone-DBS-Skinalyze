@@ -45,7 +45,7 @@ function handleLogout() {
   sessionStorage.removeItem("userName");
 
   alert("Anda telah logout.");
-  window.location.href = "/login.html";
+  window.location.href = "/index.html";
 }
 
 function updateNavbarBasedOnLoginStatus() {
