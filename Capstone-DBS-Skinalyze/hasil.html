@@ -85,6 +85,7 @@
       const previewEl = document.getElementById('preview-image');
       const checkAgainBtn = document.getElementById('check-again');
       const deskripsiEl = document.getElementById('hasil-deskripsi');
+      const backToHomeBtn = document.getElementById('back-to-home');
       
       // Retrieve the data from localStorage
       const result = JSON.parse(localStorage.getItem('predictionResult') || '{}');
@@ -126,6 +127,10 @@
       // 3. Add event listener for the "Check Again" button
       checkAgainBtn?.addEventListener('click', () => {
         window.location.href = '/skin-check.html';
+      });
+
+      backToHomeBtn?.addEventListener('click', () => {
+        window.location.href = '/index.html';
       });
     });
   </script>
